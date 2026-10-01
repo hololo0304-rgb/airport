@@ -104,10 +104,41 @@
   </div>
 
   <script>
-    // -------------------------------------------------------------
-    // 🔑 在下方單引號內填入您的 RapidAPI Key
-    // -------------------------------------------------------------
     const API_KEY = 'c8a03a5aeemshca1183c29c06ad5p19c8adjsn5eed4dd704a9';
+
+    // 機場/目的地多國語言字典（API 僅回傳英文地名，故需要對照）
+    const cityTranslations = {
+      ja: {
+        'Helsinki': 'ヘルシンキ',
+        'Tokyo': '東京',
+        'Haneda': '羽田',
+        'Narita': '成田',
+        'Taipei': '台北',
+        'Taoyuan': '桃園',
+        'London': 'ロンドン',
+        'Paris': 'パリ',
+        'Frankfurt': 'フランクフルト',
+        'Bangkok': 'バンコク',
+        'Singapore': 'シンガポール',
+        'Seoul': 'ソウル',
+        'Incheon': '仁川'
+      },
+      zh: {
+        'Helsinki': '赫爾辛基',
+        'Tokyo': '東京',
+        'Haneda': '羽田',
+        'Narita': '成田',
+        'Taipei': '台北',
+        'Taoyuan': '桃園',
+        'London': '倫敦',
+        'Paris': '巴黎',
+        'Frankfurt': '法蘭克福',
+        'Bangkok': '曼谷',
+        'Singapore': '新加坡',
+        'Seoul': '首爾',
+        'Incheon': '仁川'
+      }
+    };
 
     const i18n = {
       ja: {
@@ -150,9 +181,20 @@
 
     let currentIndex = 0;
     let currentLang = 'ja';
-    const CACHE_DURATION = 6 * 60 * 60 * 1000; // 6小時更新一次 Cache
+    const CACHE_DURATION = 6 * 60 * 60 * 1000;
 
     function getLang() { return i18n[currentLang] || i18n['ja']; }
+
+    // 格式化指定時區的 Date 物件字串：YYYY-MM-DDTHH:mm
+    function getISOStringInTimeZone(date, timeZone) {
+      const formatter = new Intl.DateTimeFormat('sv-SE', {
+        timeZone,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false
+      });
+      return formatter.format(date).replace(' ', 'T');
+    }
 
     // 取得機場當前當地時間 HH:mm
     function getAirportLocalTimeStr(timeZone) {
@@ -162,6 +204,22 @@
       const v = {};
       parts.forEach(p => v[p.type] = p.value);
       return `${v.hour}:${v.minute}`;
+    }
+
+    // 翻譯目的地地名
+    function translateLocation(iata, nameRaw) {
+      if (currentLang === 'en') {
+        return iata ? `${iata} ${nameRaw}` : nameRaw;
+      }
+      const dict = cityTranslations[currentLang] || {};
+      let translated = nameRaw;
+      
+      Object.keys(dict).forEach(key => {
+        const reg = new RegExp(key, 'gi');
+        translated = translated.replace(reg, dict[key]);
+      });
+
+      return iata ? `${iata} ${translated}` : translated;
     }
 
     async function fetchFlightData(forceRefresh = false) {
@@ -186,12 +244,12 @@
 
       try {
         const nowObj = new Date();
-        const fromISO = nowObj.toISOString().substring(0, 16);
-        // 抓取未來 12 小時的離港航班
+        // 修正：依據該機場時區計算 API 查詢起迄時間
+        const fromISO = getISOStringInTimeZone(nowObj, ap.timeZone).substring(0, 16);
         const toObj = new Date(nowObj.getTime() + 12 * 60 * 60 * 1000);
-        const toISO = toObj.toISOString().substring(0, 16);
+        const toISO = getISOStringInTimeZone(toObj, ap.timeZone).substring(0, 16);
 
-        const response = await fetch(`https://aerodatabox.p.rapidapi.com/flights/airports/icao/${ap.icao}/${fromISO}/${toISO}?departures=true`, {
+        const response = await fetch(`https://aerodatabox.p.rapidapi.com/flights/airports/icao/${ap.icao}/${fromISO}/${toISO}?departures=true&codeshares=false`, {
           headers: {
             'x-rapidapi-key': API_KEY,
             'x-rapidapi-host': 'aerodatabox.p.rapidapi.com'
@@ -214,29 +272,51 @@
 
     function parseApiBatchData(departures) {
       if (!departures) return [];
-      return departures.map(f => {
-        const rawLocal = f.movement.scheduledTimeLocal || '';
-        const timeStr = rawLocal.substring(11, 16);
-        const code = f.number || '--';
-        let destName = '';
-        if (f.movement.airport) {
-          const iata = f.movement.airport.iata || '';
-          const name = f.movement.airport.name || f.movement.airport.municipalityName || '';
-          destName = iata ? `${iata} ${name}` : name;
-        } else {
-          destName = '--';
+
+      const result = [];
+      const primaryFlightsMap = new Map();
+
+      departures.forEach(f => {
+        // 1. 過濾共掛班號 (Codeshare)
+        if (f.codeshareStatus === 'IsCodeshare') return;
+
+        // 2. 解析時間
+        let timeStr = '--:--';
+        if (f.movement && f.movement.scheduledTimeLocal) {
+          const rawLocal = f.movement.scheduledTimeLocal;
+          const match = rawLocal.match(/T(\d{2}:\d{2})/);
+          if (match) timeStr = match[1];
         }
-        return { time: timeStr, code, dest: destName };
+
+        const code = f.number || '--';
+
+        // 3. 取得原始目的地資訊
+        let iata = '';
+        let rawDestName = '';
+        if (f.movement && f.movement.airport) {
+          iata = f.movement.airport.iata || '';
+          rawDestName = f.movement.airport.municipalityName || f.movement.airport.name || '';
+        } else {
+          rawDestName = '--';
+        }
+
+        // 4. secondary 防呆：若有相同時間與目的地，只留第一班（主要航班）
+        const primaryKey = `${timeStr}_${iata || rawDestName}`;
+        if (!primaryFlightsMap.has(primaryKey)) {
+          const flightObj = { time: timeStr, code, iata, rawDestName };
+          primaryFlightsMap.set(primaryKey, flightObj);
+          result.push(flightObj);
+        }
       });
+
+      return result;
     }
 
-    // 根據當地「當前時間」過濾，顯示比現在晚的 5 筆航班
     function filterAndRender(fullList, ap) {
       const curLocalTime = getAirportLocalTimeStr(ap.timeZone);
       
       let upcoming = fullList.filter(f => f.time >= curLocalTime);
       
-      // 若當日剩餘班次不足 5 筆，則輪播補齊
       if (upcoming.length < 5) {
         upcoming = upcoming.concat(fullList);
       }
@@ -268,13 +348,18 @@
         tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8;">${msg}</td></tr>`;
         return;
       }
-      tbody.innerHTML = flights.map(f => `
-        <tr>
-          <td class="col-time">${f.time}</td>
-          <td class="col-flight">${f.code}</td>
-          <td class="col-dest" title="${f.dest}">${f.dest}</td>
-        </tr>
-      `).join('');
+
+      tbody.innerHTML = flights.map(f => {
+        // 即時對應語言檔翻譯地名
+        const destDisplay = translateLocation(f.iata, f.rawDestName);
+        return `
+          <tr>
+            <td class="col-time">${f.time}</td>
+            <td class="col-flight">${f.code}</td>
+            <td class="col-dest" title="${destDisplay}">${destDisplay}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function updateTimestamp(dateObj) {
@@ -291,7 +376,6 @@
       renderWidget();
     }
 
-    // 統一綁定點擊事件（相容主視窗與 PiP 懸浮視窗）
     function attachEventListeners(targetDoc) {
       targetDoc.addEventListener('click', (e) => {
         if (e.target.id === 'nextBtn') {
@@ -313,10 +397,8 @@
       });
     }
 
-    // 綁定主視窗事件
     attachEventListeners(document);
 
-    // PiP 置頂懸浮窗
     document.getElementById('openPipBtn').addEventListener('click', async () => {
       if ('documentPictureInPicture' in window) {
         const pipWindow = await window.documentPictureInPicture.requestWindow({
@@ -341,7 +423,6 @@
         const widget = document.getElementById('widget');
         pipWindow.document.body.appendChild(widget);
 
-        // 為懸浮視窗綁定事件
         attachEventListeners(pipWindow.document);
 
         pipWindow.addEventListener('unload', () => {
@@ -352,7 +433,6 @@
       }
     });
 
-    // 初始化啟動
     updateLanguageUI();
   </script>
 </body>
