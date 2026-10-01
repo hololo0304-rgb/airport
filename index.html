@@ -17,7 +17,7 @@
       box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); border: 1px solid #334155; padding: 12px;
     }
     .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11px; }
-    .lang-select { background: #334155; color: #f8fafc; border: 1px solid #475569; border-radius: 4px; padding: 2px 4px; font-size: 10px; outline: none; }
+    .lang-select { background: #334155; color: #f8fafc; border: 1px solid #475569; border-radius: 4px; padding: 2px 4px; font-size: 10px; outline: none; cursor: pointer; }
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #334155; }
     .airport-title { font-size: 15px; font-weight: bold; color: #38bdf8; }
     .nav-btn { background: #334155; border: none; color: #f8fafc; cursor: pointer; padding: 4px 10px; border-radius: 4px; font-size: 14px; }
@@ -39,7 +39,7 @@
 
   <div id="widget" class="widget-container">
     <div class="top-bar">
-      <span style="color: #64748b;">✈ JP / TW Live Departures</span>
+      <span style="color: #64748b;">✈ Live Departures</span>
       <select id="langSelect" class="lang-select">
         <option value="ja">日本語</option>
         <option value="zh">繁體中文</option>
@@ -71,23 +71,24 @@
         <span id="updateTime">更新: --:--</span>
         <button class="refresh-btn" id="manualRefreshBtn">🔄</button>
       </div>
-      <span style="color: #475569;">台日機場專用</span>
+      <span style="color: #475569;">台日專用免 Key 版</span>
     </div>
   </div>
 
   <script>
     // -------------------------------------------------------------
-    // 台日主要機場對照字典 (原生支援 日/中/英 顯示)
+    // 多國語言字典（解決 API 只回傳英文地名與標題的問題）
     // -------------------------------------------------------------
-    const AIRPORT_DICT = {
+    const AIRPORT_NAMES = {
       HND: { ja: '東京羽田 (HND)', zh: '東京羽田 (HND)', en: 'Tokyo Haneda (HND)' },
-      NRT: { ja: '東京成田 (NRT)', zh: '東京成田 (NRT)', en: 'Tokyo Narita (NRT)' },
-      KIX: { ja: '大阪關西 (KIX)', zh: '大阪關西 (KIX)', en: 'Osaka Kansai (KIX)' },
       TPE: { ja: '台北桃園 (TPE)', zh: '台北桃園 (TPE)', en: 'Taipei Taoyuan (TPE)' },
-      TSA: { ja: '台北松山 (TSA)', zh: '台北松山 (TSA)', en: '台北松山 (TSA)' },
-      KHH: { ja: '高雄小港 (KHH)', zh: '高雄小港 (KHH)', en: 'Kaohsiung (KHH)' },
-      FUK: { ja: '福岡 (FUK)',     zh: '福岡 (FUK)',     en: 'Fukuoka (FUK)' },
-      CTS: { ja: '札幌新千歲 (CTS)',zh: '札幌新千歲 (CTS)',en: 'Sapporo (CTS)' }
+      TSA: { ja: '台北松山 (TSA)', zh: '台北松山 (TSA)', en: 'Taipei Songshan (TSA)' }
+    };
+
+    const CITY_DICT = {
+      ja: { 'HND': '羽田', 'NRT': '成田', 'KIX': '関西', 'TPE': '台北桃園', 'TSA': '台北松山', 'KHH': '高雄', 'CTS': '札幌', 'FUK': '福岡', 'NGO': '中部', 'OKA': '沖縄', 'HKG': '香港', 'ICN': '仁川', 'BKK': 'バンコク', 'SIN': 'シンガポール', 'LHR': 'ロンドン', 'CDG': 'パリ' },
+      zh: { 'HND': '東京羽田', 'NRT': '東京成田', 'KIX': '大阪關西', 'TPE': '台北桃園', 'TSA': '台北松山', 'KHH': '高雄小港', 'CTS': '札幌新千歲', 'FUK': '福岡', 'NGO': '名古屋中部', 'OKA': '沖繩那霸', 'HKG': '香港', 'ICN': '首爾仁川', 'BKK': '曼谷', 'SIN': '新加坡', 'LHR': '倫敦', 'CDG': '巴黎' },
+      en: { 'HND': 'Tokyo Haneda', 'NRT': 'Tokyo Narita', 'KIX': 'Osaka Kansai', 'TPE': 'Taipei Taoyuan', 'TSA': 'Taipei Songshan', 'KHH': 'Kaohsiung', 'CTS': 'Sapporo', 'FUK': 'Fukuoka', 'NGO': 'Nagoya', 'OKA': 'Okinawa', 'HKG': 'Hong Kong', 'ICN': 'Seoul Incheon' }
     };
 
     const i18n = {
@@ -96,79 +97,162 @@
       en: { pipBtn: '📌 Pin to Desktop', headers: ['Time', 'Flight', 'Destination'], update: 'Updated' }
     };
 
-    // 選單機場清單（可自由調整順序）
     const selectedAirports = [
-      { code: 'HND', icao: 'RJTT', timeZone: 'Asia/Tokyo' },
-      { code: 'TPE', icao: 'RCTP', timeZone: 'Asia/Taipei' },
-      { code: 'KIX', icao: 'RJBB', timeZone: 'Asia/Tokyo' },
-      { code: 'TSA', icao: 'RCSS', timeZone: 'Asia/Taipei' }
+      { code: 'HND', icao: 'RJTT', region: 'JP', timeZone: 'Asia/Tokyo' },
+      { code: 'TPE', icao: 'RCTP', region: 'TW', timeZone: 'Asia/Taipei' },
+      { code: 'TSA', icao: 'RCSS', region: 'TW', timeZone: 'Asia/Taipei' }
     ];
 
     let currentIndex = 0;
     let currentLang = 'ja';
 
-    // 取得該機場當前當地時間 HH:mm
-    function getAirportLocalTime(timeZone) {
+    // 計算指定時區當前時間 (HH:mm)
+    function getAirportLocalTimeStr(timeZone) {
       const now = new Date();
-      const formatter = new Intl.DateTimeFormat('en-GB', {
-        timeZone, hour: '2-digit', minute: '2-digit', hour12: false
-      });
-      return formatter.format(now);
+      const options = { timeZone, hour12: false, hour: '2-digit', minute: '2-digit' };
+      const parts = new Intl.DateTimeFormat('en-GB', options).formatToParts(now);
+      const v = {};
+      parts.forEach(p => v[p.type] = p.value);
+      return `${v.hour}:${v.minute}`;
     }
 
-    // 模擬或介接開放 API 資料（包含時間格式化與共掛過濾）
+    // 主資料抓取門戶：分流台灣與日本 API
     async function fetchFlightData() {
       const ap = selectedAirports[currentIndex];
-      const localNowStr = getAirportLocalTime(ap.timeZone);
+      renderLoading();
 
-      // 提示：若您有新的 API Endpoint，直接在這裡替換 fetch 即可
-      // 此處已為您套用「共掛班號去除 + 時區時間過濾 + 多語系地名轉譯」邏輯
       try {
-        // 範例測試資料集 (模擬 API 回傳)
-        const mockRawData = [
-          { time: addMinutes(localNowStr, 15), flight: 'JL099', destCode: 'TSA', isCodeshare: false },
-          { time: addMinutes(localNowStr, 15), flight: 'CI9217', destCode: 'TSA', isCodeshare: true }, // 共掛班號
-          { time: addMinutes(localNowStr, 35), flight: 'NH853', destCode: 'TSA', isCodeshare: false },
-          { time: addMinutes(localNowStr, 50), flight: 'BR191', destCode: 'TPE', isCodeshare: false },
-          { time: addMinutes(localNowStr, 80), flight: 'JX801', destCode: 'NRT', isCodeshare: false },
-          { time: addMinutes(localNowStr, 105), flight: 'MM023', destCode: 'KIX', isCodeshare: false }
-        ];
+        let flights = [];
+        if (ap.region === 'TW') {
+          flights = await fetchTaiwanTDX(ap.code);
+        } else {
+          flights = await fetchJapanFlightradar(ap.code);
+        }
 
-        // 1. 過濾共掛班號 (isCodeshare === true)
-        const cleanList = mockRawData.filter(item => !item.isCodeshare);
-
-        // 2. 轉換目的地名稱為當前語系
-        const formattedList = cleanList.map(item => {
-          const destObj = AIRPORT_DICT[item.destCode];
-          const destName = destObj ? destObj[currentLang] || destObj.en : item.destCode;
-          return {
-            time: item.time,
-            code: item.flight,
-            dest: destName
-          };
-        });
-
-        renderFlights(formattedList);
+        filterAndRender(flights, ap);
         updateTimestamp();
       } catch (e) {
-        renderFlights([], '讀取失敗');
+        console.error("Fetch Error:", e);
+        renderFlights([], '資料讀取失敗');
       }
     }
 
-    function addMinutes(timeStr, mins) {
-      const [h, m] = timeStr.split(':').map(Number);
-      const d = new Date();
-      d.setHours(h, m + mins);
-      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    // 1. 台灣機場 API：使用台灣政府 TDX 免費開放資料 API
+    async function fetchTaiwanTDX(airportCode) {
+      const url = `https://tdx.transportdata.tw/api/basic/v2/Air/FIDS/Airport/Departure/${airportCode}?$top=30&$format=JSON`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('TDX API Error');
+      const data = await res.json();
+
+      return data.map(f => {
+        // 時間處理
+        const schTime = f.ScheduleDepartureTime || f.TargetDepartureTime || '';
+        const timeStr = schTime ? schTime.substring(11, 16) : '--:--';
+        
+        // 班號處理
+        const code = `${f.AirlineID || ''}${f.FlightNumber || ''}`;
+        
+        // 共掛判斷
+        const isCodeshare = !!f.MasterFlightNumber && f.MasterFlightNumber !== f.FlightNumber;
+        
+        // 目的地 IATA 代碼
+        const destCode = f.ArrivalAirportID || '';
+        const destNameRaw = f.ArrivalAirportName ? (f.ArrivalAirportName.Zh_tw || f.ArrivalAirportName.En || '') : destCode;
+
+        return {
+          time: timeStr,
+          code: code,
+          destCode: destCode,
+          destNameRaw: destNameRaw,
+          isCodeshare: isCodeshare
+        };
+      });
+    }
+
+    // 2. 日本機場 API：使用公共開放 API endpoint
+    async function fetchJapanFlightradar(airportIATA) {
+      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://api.flightradar24.com/common/v1/airport.json?code=${airportIATA}&plugin[]=&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=${Math.floor(Date.now()/1000)}&page=1&limit=25`)}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Japan API Error');
+      const json = await res.json();
+      
+      const list = json.result.response.airport.pluginData.schedule.departures.data || [];
+
+      return list.map(item => {
+        const f = item.flight;
+        const schTime = f.time.scheduled.departure;
+        let timeStr = '--:--';
+        if (schTime) {
+          const d = new Date(schTime * 1000);
+          // 轉為日本 JST 時間 (HH:mm)
+          timeStr = d.toLocaleTimeString('en-GB', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit' });
+        }
+
+        const code = f.identification.number.default || '--';
+        const isCodeshare = !!(f.codeshare && f.codeshare.length > 0);
+        const destCode = f.airport.destination ? f.airport.destination.code.iata : '';
+        const destNameRaw = f.airport.destination ? f.airport.destination.name : '';
+
+        return {
+          time: timeStr,
+          code: code,
+          destCode: destCode,
+          destNameRaw: destNameRaw,
+          isCodeshare: isCodeshare
+        };
+      });
+    }
+
+    // 依「當地現在時間」過濾 + 去除共掛班號
+    function filterAndRender(fullList, ap) {
+      const curLocalTime = getAirportLocalTimeStr(ap.timeZone);
+
+      // 1. 去除共掛班號
+      let clean = fullList.filter(f => !f.isCodeshare);
+
+      // 2. 篩選晚於「機場當地現在時間」的班次
+      let upcoming = clean.filter(f => f.time >= curLocalTime);
+
+      // 班次過少時補齊
+      if (upcoming.length < 5) {
+        upcoming = upcoming.concat(clean);
+      }
+
+      // 3. 去重並取前 5 筆
+      const displayFlights = [];
+      const seen = new Set();
+      for (const f of upcoming) {
+        const key = `${f.time}_${f.destCode}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          displayFlights.push(f);
+        }
+        if (displayFlights.length >= 5) break;
+      }
+
+      renderFlights(displayFlights);
+    }
+
+    // 轉換目的地顯示名稱（優先匹配字典檔）
+    function getTranslatedDest(destCode, destNameRaw) {
+      const dict = CITY_DICT[currentLang] || {};
+      if (dict[destCode]) {
+        return `${destCode} ${dict[destCode]}`;
+      }
+      return destCode ? `${destCode} ${destNameRaw}` : destNameRaw;
     }
 
     function renderWidget() {
       const ap = selectedAirports[currentIndex];
-      const nameObj = AIRPORT_DICT[ap.code];
-      const displayName = nameObj ? nameObj[currentLang] || nameObj.en : ap.code;
+      const nameObj = AIRPORT_NAMES[ap.code];
+      const displayName = nameObj ? (nameObj[currentLang] || nameObj.en) : ap.code;
       
       document.getElementById('airportName').innerText = `✈ ${displayName}`;
       fetchFlightData();
+    }
+
+    function renderLoading() {
+      document.getElementById('flightTableBody').innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8;">Loading...</td></tr>`;
     }
 
     function renderFlights(flights, msg = 'No Departures') {
@@ -177,13 +261,17 @@
         tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8;">${msg}</td></tr>`;
         return;
       }
-      tbody.innerHTML = flights.slice(0, 5).map(f => `
-        <tr>
-          <td class="col-time">${f.time}</td>
-          <td class="col-flight">${f.code}</td>
-          <td class="col-dest" title="${f.dest}">${f.dest}</td>
-        </tr>
-      `).join('');
+
+      tbody.innerHTML = flights.map(f => {
+        const destDisplay = getTranslatedDest(f.destCode, f.destNameRaw);
+        return `
+          <tr>
+            <td class="col-time">${f.time}</td>
+            <td class="col-flight">${f.code}</td>
+            <td class="col-dest" title="${destDisplay}">${destDisplay}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function updateTimestamp() {
@@ -224,7 +312,7 @@
 
     attachEventListeners(document);
 
-    // PiP 懸浮視窗功能
+    // Desktop PiP (Picture-in-Picture) 置頂功能
     document.getElementById('openPipBtn').addEventListener('click', async () => {
       if ('documentPictureInPicture' in window) {
         const pipWindow = await window.documentPictureInPicture.requestWindow({ width: 350, height: 220 });
