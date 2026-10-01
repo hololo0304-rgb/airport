@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>機場即時航班懸浮小工具</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #0f172a; color: #f8fafc;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 10px;
+    }
+    
+    /* 懸浮視窗主容器 */
+    .widget-container {
+      width: 320px; background: #1e293b; border-radius: 12px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); overflow: hidden;
+      border: 1px solid #334155; padding: 12px;
+    }
+    
+    /* 機場標頭與切換器 */
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #334155;
+    }
+    .airport-title { font-size: 16px; font-weight: bold; color: #38bdf8; }
+    .nav-btn {
+      background: #334155; border: none; color: #f8fafc; cursor: pointer;
+      padding: 4px 8px; border-radius: 4px; font-size: 12px; transition: 0.2s;
+    }
+    .nav-btn:hover { background: #475569; }
+    
+    /* 航班表格 */
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { text-align: left; color: #94a3b8; font-weight: 500; padding-bottom: 6px; }
+    td { padding: 6px 0; border-top: 1px dashed #334155; }
+    
+    .flight-no { font-weight: bold; color: #f1f5f9; }
+    .status-ok { color: #4ade80; }
+    .status-delay { color: #f87171; }
+    
+    /* 頁尾資訊 */
+    .footer {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 10px; font-size: 10px; color: #64748b;
+    }
+    .btn-pip {
+      background: #0284c7; color: white; border: none; padding: 6px 12px;
+      border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;
+    }
+    .btn-pip:hover { background: #0369a1; }
+  </style>
+</head>
+<body>
+
+  <!-- 置頂開關（主頁面顯示） -->
+  <button id="openPipBtn" class="btn-pip" style="margin-bottom: 15px;">📌 開啟桌面置頂懸浮窗</button>
+
+  <!-- 小工具本體 -->
+  <div id="widget" class="widget-container">
+    <div class="header">
+      <button class="nav-btn" onclick="prevAirport()">◄</button>
+      <div class="airport-title" id="airportName">✈ 赫爾辛基 (HEL)</div>
+      <button class="nav-btn" onclick="nextAirport()">►</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>時間</th>
+          <th>航班</th>
+          <th>目的地</th>
+          <th>狀態</th>
+        </tr>
+      </thead>
+      <tbody id="flightTableBody">
+        <!-- 航班資料動態渲染 -->
+      </tbody>
+    </table>
+
+    <div class="footer">
+      <span id="updateTime">更新時間: --:--</span>
+      <label><input type="checkbox" id="autoRotate" checked> 自動輪播</label>
+    </div>
+  </div>
+
+  <script>
+    // 預設三個機場的測試/預覽資料
+    const airports = [
+      {
+        code: 'HEL', name: '赫爾辛基 (HEL)',
+        flights: [
+          { time: '14:05', code: 'AY133', dest: 'HND 東京', status: '準時', ok: true },
+          { time: '14:20', code: 'AY141', dest: 'BKK 曼谷', status: '準時', ok: true },
+          { time: '14:35', code: 'AY121', dest: 'DEL 德里', status: '準時', ok: true },
+          { time: '14:50', code: 'KL117', dest: 'AMS 阿姆斯特丹', status: '延誤 15m', ok: false },
+          { time: '15:10', code: 'LH246', dest: 'FRA 法蘭克福', status: '登機中', ok: true }
+        ]
+      },
+      {
+        code: 'HND', name: '東京羽田 (HND)',
+        flights: [
+          { time: '14:15', code: 'JL097', dest: 'TSA 台北松山', status: '準時', ok: true },
+          { time: '14:30', code: 'NH853', dest: 'TSA 台北松山', status: '準時', ok: true },
+          { time: '14:45', code: 'CI101', dest: 'TPE 台北桃園', status: '登機中', ok: true },
+          { time: '15:00', code: 'JL031', dest: 'BKK 曼谷', status: '準時', ok: true },
+          { time: '15:20', code: 'CX549', dest: 'HKG 香港', status: '延誤 10m', ok: false }
+        ]
+      },
+      {
+        code: 'TPE', name: '台北桃園 (TPE)',
+        flights: [
+          { time: '14:10', code: 'BR198', dest: 'NRT 東京成田', status: '準時', ok: true },
+          { time: '14:25', code: 'CI108', dest: 'NRT 東京成田', status: '登機中', ok: true },
+          { time: '14:40', code: 'JX802', dest: 'NRT 東京成田', status: '準時', ok: true },
+          { time: '15:05', code: 'BR215', dest: 'SIN 新加坡', status: '準時', ok: true },
+          { time: '15:30', code: 'CI751', dest: 'SIN 新加坡', status: '準時', ok: true }
+        ]
+      }
+    ];
+
+    let currentIndex = 0;
+
+    function renderWidget() {
+      const ap = airports[currentIndex];
+      document.getElementById('airportName').innerText = `✈ ${ap.name}`;
+      
+      const tbody = document.getElementById('flightTableBody');
+      tbody.innerHTML = ap.flights.map(f => `
+        <tr>
+          <td>${f.time}</td>
+          <td class="flight-no">${f.code}</td>
+          <td>${f.dest}</td>
+          <td class="${f.ok ? 'status-ok' : 'status-delay'}">${f.status}</td>
+        </tr>
+      `).join('');
+
+      const now = new Date();
+      document.getElementById('updateTime').innerText = `更新時間: ${now.toTimeString().substring(0, 5)}`;
+    }
+
+    function nextAirport() {
+      currentIndex = (currentIndex + 1) % airports.length;
+      renderWidget();
+    }
+
+    function prevAirport() {
+      currentIndex = (currentIndex - 1 + airports.length) % airports.length;
+      renderWidget();
+    }
+
+    // 自動輪播機制 (每 10 秒翻頁)
+    setInterval(() => {
+      if (document.getElementById('autoRotate').checked) {
+        nextAirport();
+      }
+    }, 10000);
+
+    // 觸發 Document Picture-in-Picture 置頂視窗
+    document.getElementById('openPipBtn').addEventListener('click', async () => {
+      if ('documentPictureInPicture' in window) {
+        const pipWindow = await window.documentPictureInPicture.requestWindow({
+          width: 340,
+          height: 220,
+        });
+
+        // 複製主頁面的樣式至懸浮窗
+        [...document.styleSheets].forEach((styleSheet) => {
+          try {
+            const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join('');
+            const style = document.createElement('style');
+            style.textContent = cssRules;
+            pipWindow.document.head.appendChild(style);
+          } catch (e) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = styleSheet.href;
+            pipWindow.document.head.appendChild(link);
+          }
+        });
+
+        // 將小工具移動至懸浮窗
+        const widget = document.getElementById('widget');
+        pipWindow.document.body.appendChild(widget);
+
+        // 關閉懸浮窗時歸位
+        pipWindow.addEventListener('unload', (event) => {
+          document.body.appendChild(widget);
+        });
+      } else {
+        alert('您的瀏覽器不支援 Document Picture-in-Picture 置頂功能，請使用最新版 Chrome 或 Edge！');
+      }
+    });
+
+    renderWidget();
+  </script>
+</body>
+</html>
