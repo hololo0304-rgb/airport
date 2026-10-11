@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>世界機場翻牌看板｜桃園 TDX 真實試用</title>
+<title>世界機場翻牌看板｜台灣六機場 TDX 真實試用</title>
 <style>
 :root{--bg:#0b0d11;--panel:#171a20;--line:#3b414a;--gold:#f0c040;--muted:#9fa9b8;--fg:#f0f3f7}
 *{box-sizing:border-box}
@@ -61,17 +61,17 @@ h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
 <main>
  <h1>✈ WORLD DEPARTURES</h1>
  <p class="subtitle">世界機場每日探索｜黑底黃字翻牌看板</p>
- <div class="note">🧪 <b>桃園 TPE 真實資料試用版</b>：六張卡片都是同一座桃園機場，點選後才向 TDX 查詢，沒有假航班。原本正式首頁不變。</div>
- <div class="clockbar"><div><small>台灣現在時間</small><div><strong id="taiwanClock">--:--</strong></div></div><div><small>桃園當地時間 · UTC+8</small><div><strong id="airportClock">--:--</strong></div></div></div>
+ <div class="note">🧪 <b>台灣六座機場真實資料試用版</b>：點選任一機場後，才向 TDX 查詢未來 12 小時出發航班。每天最多選兩座，沒有假航班。正式首頁不變。</div>
+ <div class="clockbar"><div><small>台灣現在時間</small><div><strong id="taiwanClock">--:--</strong></div></div><div><small>機場當地時間 · UTC+8</small><div><strong id="airportClock">--:--</strong></div></div></div>
  <section id="chooseScreen">
-   <div class="sectionTitle">今天想看看哪個機場？</div>
+   <div class="sectionTitle">今天想看看哪個機場？（最多選兩座）</div>
    <div id="yesterday" class="hidden"></div>
    <div class="choices" id="airportChoices" aria-label="六個機場試用選項"></div>
-   <p class="bottomHint">先選機場才會讀取 TDX。六個桃園選項共用當天的同一份快取，重複點選不會再抓取。未來正式版可改成每日六座百大機場、最多選兩座。</p>
+   <p class="bottomHint" id="selectionHint">點選機場後才讀取 TDX。同一天重複選相同機場會使用快取，不再重複查詢。</p>
  </section>
  <section id="boardScreen" class="hidden">
   <div class="board">
-   <div class="head"><div><h2>桃園國際機場 TPE</h2><small>臺灣 · Taiwan · Asia/Taipei</small></div><button id="backBtn" type="button" class="button">重新選機場</button></div>
+   <div class="head"><div><h2 id="boardAirportName">機場即時出發看板</h2><small id="boardAirportSubtitle">臺灣 · Taiwan · Asia/Taipei</small></div><button id="backBtn" type="button" class="button">重新選機場</button></div>
    <div id="windowText" class="timeSpan">查詢區間：--</div>
    <div class="headerRow"><span>TIME</span><span>FLIGHT</span><span>DESTINATION</span></div>
    <div id="flightRows"><div class="empty">準備讀取航班資料…</div></div>
@@ -79,7 +79,7 @@ h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
      <div class="footerLine"><span id="fetchStatus">尚未查詢</span><button id="refreshView" class="button" type="button">只更新畫面 ↻</button></div>
      <div class="footerLine"><span id="fetchedAt">資料取得時間：--</span><button id="retryBtn" class="button action hidden" type="button">手動重試查詢</button></div>
      <div>目的地每 3 秒切換：繁體中文 → 日本語 → English</div>
-     <div id="sourceNote">資料來源：TDX／桃園機場即時出發航班。這是選取當下的 12 小時快照，延誤或取消資訊不會自動更新。</div>
+     <div id="sourceNote">資料來源：TDX／機場即時出發航班。這是選取當下的 12 小時快照，延誤或取消資訊不會自動更新。</div>
    </div>
   </div>
  </section>
@@ -89,10 +89,21 @@ h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
 const TZ = "Asia/Taipei";
 const HOURS = 12;
 const MS_HOUR = 3600000;
-const CACHE_PREFIX = "tpe-12h-real-preview-v1:";
+const CACHE_PREFIX = "tw-airport-12h-real-preview-v2:";
+const DAILY_SELECTIONS = "tw-airport-selected-v2:";
 const LAST_CHOICE = "airport-discovery-last-choice-v1";
 const LANGS = ["zh","ja","en"];
-const AIRPORT = {code:"TPE",name:"桃園國際機場",country:"臺灣",tz:TZ};
+const AIRPORTS = [
+ {code:"TPE",name:"桃園國際機場",country:"臺灣",tz:TZ},
+ {code:"TSA",name:"臺北松山機場",country:"臺灣",tz:TZ},
+ {code:"KHH",name:"高雄國際機場",country:"臺灣",tz:TZ},
+ {code:"RMQ",name:"臺中國際機場",country:"臺灣",tz:TZ},
+ {code:"KNH",name:"金門尚義機場",country:"臺灣",tz:TZ},
+ {code:"MZG",name:"澎湖機場（馬公）",country:"臺灣",tz:TZ}
+];
+let activeAirport = AIRPORTS[0];
+function selectedKey(){return DAILY_SELECTIONS+dateLocal(Date.now())}
+function selectedToday(){const v=readStorage(selectedKey());return Array.isArray(v)?v.filter(c=>AIRPORTS.some(a=>a.code===c)):[]}
 const DEST = {
  HND:["東京羽田","東京・羽田","Tokyo Haneda"],NRT:["東京成田","東京・成田","Tokyo Narita"],
  KIX:["大阪關西","大阪・関西","Osaka Kansai"],ITM:["大阪伊丹","大阪・伊丹","Osaka Itami"],
@@ -133,7 +144,7 @@ function dateLocal(ms){const p=new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year
 function timeLocal(ms){return new Intl.DateTimeFormat("en-GB",{timeZone:TZ,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(ms))}
 function fullLocal(ms){return dateLocal(ms)+" "+timeLocal(ms)}
 function yesterdayKey(ms){return dateLocal(ms-86400000)}
-function keyFor(ms){return CACHE_PREFIX+"TPE:"+dateLocal(ms)}
+function keyFor(ms,code=activeAirport.code){return CACHE_PREFIX+code+":"+dateLocal(ms)}
 function readStorage(k){try{return JSON.parse(localStorage.getItem(k)||"null")}catch{return null}}
 function saveStorage(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch{return false}}
 function updateClocks(){
@@ -144,32 +155,53 @@ function updateClocks(){
  options.forEach(element=>element.textContent="當地時間 "+timeLocal(now)+" (UTC+8)");
 }
 function makeChoices(){
- const area=byId("airportChoices");
- const frag=document.createDocumentFragment();
+ const area=byId("airportChoices"),frag=document.createDocumentFragment();
  const previous=readStorage(LAST_CHOICE);
- const wasYesterday=previous && previous.code==="TPE" && previous.date===yesterdayKey(Date.now());
+ const wasYesterday=previous&&AIRPORTS.some(ap=>ap.code===previous.code)&&previous.date===yesterdayKey(Date.now());
+ const already=selectedToday();
  byId("yesterday").classList.toggle("hidden",!wasYesterday);
- if(wasYesterday)byId("yesterday").textContent="↩ 昨天選過：桃園國際機場 TPE（已保留在今日選項）";
- for(let i=0;i<6;i++){
-   const button=document.createElement("button");button.type="button";button.className="airportChoice";
-   const first=document.createElement("div");first.className="slot";first.textContent=(wasYesterday&&i===0?"★ 昨日機場 · ":"試用選項 · ")+pad(i+1);
-   const row=document.createElement("div");row.className="place";
-   const code=document.createElement("strong");code.textContent="TPE";
-   const country=document.createElement("em");country.textContent="臺灣";
-   row.append(code,country);
-   const name=document.createElement("div");name.className="name";name.textContent="桃園國際機場";
-   const local=document.createElement("div");local.className="local";local.textContent="當地時間 "+timeLocal(Date.now())+" (UTC+8)";
-   button.append(first,row,name,local);
-   button.addEventListener("click",chooseAirport);
-   frag.appendChild(button);
+ if(wasYesterday){
+   const old=AIRPORTS.find(ap=>ap.code===previous.code);
+   byId("yesterday").textContent="↩ 昨天選過："+old.name+"（已保留在今日選項）";
  }
+ byId("selectionHint").textContent="今日已選 "+already.length+"／2 座。點選後才查 TDX；再次選同一座，會使用第一次選取起算 12 小時的快取。";
+ AIRPORTS.forEach((ap,i)=>{
+   const button=document.createElement("button");button.type="button";button.className="airportChoice";
+   const first=document.createElement("div");first.className="slot";
+   first.textContent=(wasYesterday&&ap.code===previous.code?"★ 昨日選過 · ":"機場選項 · ")+pad(i+1)+(already.includes(ap.code)?" · 已選過":"");
+   const row=document.createElement("div");row.className="place";
+   const code=document.createElement("strong");code.textContent=ap.code;
+   const country=document.createElement("em");country.textContent=ap.country;
+   row.append(code,country);
+   const name=document.createElement("div");name.className="name";name.textContent=ap.name;
+   const local=document.createElement("div");local.className="local";
+   local.textContent="當地時間 "+timeLocal(Date.now())+" (UTC+8)";
+   button.append(first,row,name,local);
+   button.addEventListener("click",()=>chooseAirport(ap.code));
+   frag.appendChild(button);
+ });
  area.replaceChildren(frag);
 }
-function chooseAirport(){
- selected=true;
+function chooseAirport(code){
+ const ap=AIRPORTS.find(x=>x.code===code);if(!ap)return;
+ const already=selectedToday();
+ if(!already.includes(code)){
+   if(already.length>=2){
+     byId("selectionHint").textContent="今天已選滿兩座："+already.join("、")+"。仍可重新查看已選機場，不再新增第三座。";
+     return;
+   }
+   if(!saveStorage(selectedKey(),[...already,code])){
+     byId("selectionHint").textContent="無法儲存選擇紀錄，為避免重複耗用額度，暫不發出 API 查詢。";
+     return;
+   }
+ }
+ activeAirport=ap;selected=true;languageIndex=0;
  byId("chooseScreen").classList.add("hidden");
  byId("boardScreen").classList.remove("hidden");
- saveStorage(LAST_CHOICE,{code:"TPE",date:dateLocal(Date.now())});
+ byId("boardAirportName").textContent=ap.name+" "+ap.code;
+ byId("boardAirportSubtitle").textContent=ap.country+" · Taiwan · "+ap.tz;
+ saveStorage(LAST_CHOICE,{code,date:dateLocal(Date.now())});
+ byId("airportClock").textContent=timeLocal(Date.now());
  startSnapshot(false);
 }
 function goBack(){
@@ -231,7 +263,7 @@ function makeQuery(startMs,endMs){
  p.set("$orderby","ScheduleDepartureTime asc");
  p.set("$top","1600");
  p.set("$format","JSON");
- return "https://tdx.transportdata.tw/api/basic/v2/Air/FIDS/Airport/Departure/TPE?"+p.toString();
+ return "https://tdx.transportdata.tw/api/basic/v2/Air/FIDS/Airport/Departure/"+activeAirport.code+"?"+p.toString();
 }
 async function fetchTDX(startMs,endMs){
  const controller=new AbortController();
@@ -242,17 +274,17 @@ async function fetchTDX(startMs,endMs){
    const json=await resp.json();
    if(!Array.isArray(json))throw Error("TDX 回應格式不是航班清單");
    const flights=parseFlights(json,startMs,endMs);
-   return {state:"ok",code:"TPE",startMs,endMs,fetchedMs:Date.now(),flights,partial:json.length>=1600,returned:json.length};
+   return {state:"ok",code:activeAirport.code,startMs,endMs,fetchedMs:Date.now(),flights,partial:json.length>=1600,returned:json.length};
  }finally{clearTimeout(timer)}
 }
 function validateCache(data){
- return data && data.code==="TPE" && data.state==="ok" &&
+ return data && data.code===activeAirport.code && data.state==="ok" &&
  Number.isFinite(data.startMs) && Number.isFinite(data.endMs) &&
  data.endMs-data.startMs===HOURS*MS_HOUR && Array.isArray(data.flights);
 }
 async function startSnapshot(force){
  if(requestPending)return;
- const now=Date.now(),key=keyFor(now);
+ const now=Date.now(),key=keyFor(now,activeAirport.code);
  if(!force){
    const cached=readStorage(key);
    if(validateCache(cached)){
@@ -264,21 +296,23 @@ async function startSnapshot(force){
  }
  const startMs=Date.now(),endMs=startMs+HOURS*MS_HOUR;
  requestPending=true;
+ const requestedCode=activeAirport.code;
  snapshot=null;renderFingerprint="";
  byId("windowText").textContent="查詢區間："+fullLocal(startMs)+" → "+fullLocal(endMs)+"（12 小時）";
- empty("正在向 TDX 查詢桃園機場真實航班…");
+ empty("正在向 TDX 查詢"+activeAirport.name+"真實出發航班…");
  mark("正在查詢，請勿重複點選",false);
  try{
    const data=await fetchTDX(startMs,endMs);
-   snapshot=data;
+   if(data.code!==requestedCode)throw Error("Airport was changed during request");
    if(!saveStorage(key,data))mark("本次成功，但瀏覽器無法保存快取；重新開啟可能重查",false);
-   renderFingerprint="";
-   displaySnapshot();
+   if(activeAirport.code===requestedCode){snapshot=data;renderFingerprint="";displaySnapshot()}
  }catch(err){
    console.warn("TDX TPE query failed",err);
-   snapshot=null;
-   mark("真實資料讀取失敗："+String(err.message||err)+"；可手動重試",true);
-   empty("無法取得桃園機場 TDX 班表。不會用假資料填補，也不會自動重試。");
+   if(activeAirport.code===requestedCode){
+    snapshot=null;
+    mark("真實資料讀取失敗："+String(err.message||err)+"；可手動重試",true);
+    empty("無法取得"+activeAirport.name+" TDX 班表。不會用假資料填補，也不會自動重試。");
+   }
  }finally{requestPending=false}
 }
 function timeTiles(ms){
