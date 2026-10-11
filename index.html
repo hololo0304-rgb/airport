@@ -54,18 +54,18 @@ const AIRPORTS=[
   {code:"TSA",name:{zh:"台北松山機場",ja:"台北松山",en:"Songshan"},tz:"Asia/Taipei",source:"TDX"}
 ];
 const I18N={
-  zh:{headers:["時間","航班","目的地"],refresh:"只更新畫面 ↻",waiting:"讀取本日資料中…",none:"快取中沒有剩餘的今日航班。",missing:"羽田目前沒有已授權且允許快取的班表資料來源；暫停使用原來的非正式 FR24 介面。",failed:"本日取得資料失敗，為節省 API 額度，今天不會自動重試。",status:"本日快取",attempt:"今日已嘗試",cached:"已讀取",at:"抓取時間",note:"每日班表快照，非即時延誤／取消資訊。",partial:"資料可能不完整（達到單次取回筆數上限）。",storage:"瀏覽器未開放本地儲存，為避免重複耗用額度，沒有連接 API。",source:"本日快取"},
-  ja:{headers:["時刻","便名","行先"],refresh:"表示だけ更新 ↻",waiting:"読み込み中…",none:"本日分の今後の便がありません。",missing:"羽田の許諾済み時刻表ソースは未設定。非公式 FR24 API は停止しました。",failed:"本日取得失敗。API 節約のため再試行しません。",status:"本日キャッシュ",attempt:"本日取得試行済み",cached:"取得済み",at:"取得時刻",note:"一日一回の時刻表です。遅延・欠航の速報ではありません。",partial:"取得上限に達したため一部欠ける可能性があります。",storage:"ローカル保存を利用できないため API を呼び出しません。",source:"保存データ"},
-  en:{headers:["Time","Flight","Destination"],refresh:"Refresh view only ↻",waiting:"Loading daily data…",none:"No further flights in today's snapshot.",missing:"No licensed cacheable Haneda schedule configured; unofficial FR24 endpoint disabled.",failed:"Today's fetch failed; no automatic retry to save API quota.",status:"Daily cache",attempt:"Attempted today",cached:"Loaded",at:"Fetched",note:"Daily timetable snapshot, not live delay/cancellation information.",partial:"Some flights may be missing due to source result limit.",storage:"Local storage is unavailable; API fetch is blocked to prevent repeated usage.",source:"Daily snapshot"}
+  zh:{headers:["時間","航班","目的地"],refresh:"只更新畫面 ↻",waiting:"讀取本日資料中…",none:"快取中沒有剩餘的今日航班。",missing:"羽田目前沒有已授權且允許快取的班表資料來源；暫停使用原來的非正式 FR24 介面。",failed:"本日取得資料失敗，為節省 API 額度，今天不會自動重試。",status:"本日快取",attempt:"今日已嘗試",cached:"已讀取",at:"抓取時間",note:"每日班表快照，非即時延誤／取消資訊；來源未必涵蓋全日。",partial:"資料可能不完整（達到單次取回筆數上限）。",storage:"瀏覽器未開放本地儲存，為避免重複耗用額度，沒有連接 API。",source:"本日快取"},
+  ja:{headers:["時刻","便名","行先"],refresh:"表示だけ更新 ↻",waiting:"読み込み中…",none:"本日分の今後の便がありません。",missing:"羽田の許諾済み時刻表ソースは未設定。非公式 FR24 API は停止しました。",failed:"本日取得失敗。API 節約のため再試行しません。",status:"本日キャッシュ",attempt:"本日取得試行済み",cached:"取得済み",at:"取得時刻",note:"一日一回の時刻表です。遅延・欠航の速報ではなく、全便を含むとは限りません。",partial:"取得上限に達したため一部欠ける可能性があります。",storage:"ローカル保存を利用できないため API を呼び出しません。",source:"保存データ"},
+  en:{headers:["Time","Flight","Destination"],refresh:"Refresh view only ↻",waiting:"Loading daily data…",none:"No further flights in today's snapshot.",missing:"No licensed cacheable Haneda schedule configured; unofficial FR24 endpoint disabled.",failed:"Today's fetch failed; no automatic retry to save API quota.",status:"Daily cache",attempt:"Attempted today",cached:"Loaded",at:"Fetched",note:"Daily timetable snapshot, not live delay/cancellation data; may not cover all flights.",partial:"Some flights may be missing due to source result limit.",storage:"Local storage is unavailable; API fetch is blocked to prevent repeated usage.",source:"Daily snapshot"}
 };
 const DEST={
   zh:{HND:"東京羽田",NRT:"東京成田",KIX:"大阪關西",KHH:"高雄",HKG:"香港",ICN:"首爾仁川",OKA:"沖繩那霸",FUK:"福岡",CTS:"札幌新千歲",TSA:"台北松山",TPE:"桃園"},
   ja:{HND:"羽田",NRT:"成田",KIX:"関西",KHH:"高雄",HKG:"香港",ICN:"仁川",OKA:"那覇",FUK:"福岡",CTS:"新千歳",TSA:"松山",TPE:"桃園"},
   en:{HND:"Haneda",NRT:"Narita",KIX:"Kansai",KHH:"Kaohsiung",HKG:"Hong Kong",ICN:"Incheon",OKA:"Okinawa",FUK:"Fukuoka",CTS:"Sapporo",TSA:"Songshan",TPE:"Taoyuan"}
 };
-let airportIndex=0,lang="zh",shownKey="",currentDay="",loading=false;
+let airportIndex=1,lang="zh",shownKey="",currentDay="";
 const CACHE_PREFIX="airport-daily-v3:";
-function el(id){return document.getElementById(id)}
+function el(id){return document.getElementById(id)||(window.documentPictureInPicture&&window.documentPictureInPicture.window&&window.documentPictureInPicture.window.document.getElementById(id))}
 function partsNow(tz,instant=new Date()){
   const parts=new Intl.DateTimeFormat("en-GB",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(instant);
   const v={};parts.forEach(p=>v[p.type]=p.value);
