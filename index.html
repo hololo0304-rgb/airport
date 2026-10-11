@@ -1,348 +1,210 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Airport Departure Widget</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0f172a; color: #f8fafc;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      min-height: 100vh; padding: 10px;
-    }
-    .widget-container {
-      width: 340px; background: #1e293b; border-radius: 12px;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); border: 1px solid #334155; padding: 12px;
-    }
-    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11px; }
-    .lang-select { background: #334155; color: #f8fafc; border: 1px solid #475569; border-radius: 4px; padding: 2px 4px; font-size: 10px; outline: none; cursor: pointer; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #334155; }
-    .airport-title { font-size: 15px; font-weight: bold; color: #38bdf8; }
-    .nav-btn { background: #334155; border: none; color: #f8fafc; cursor: pointer; padding: 4px 10px; border-radius: 4px; font-size: 14px; }
-    .nav-btn:hover { background: #475569; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
-    th { text-align: left; color: #94a3b8; font-weight: 500; padding-bottom: 6px; }
-    td { padding: 7px 0; border-top: 1px dashed #334155; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .col-time { width: 55px; }
-    .col-flight { width: 75px; font-weight: bold; color: #38bdf8; }
-    .col-dest { width: auto; color: #f1f5f9; }
-    .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 10px; color: #64748b; }
-    .btn-pip { background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; margin-bottom: 15px; }
-    .refresh-btn { background: none; border: none; color: #38bdf8; cursor: pointer; font-size: 12px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>機場每日航班翻牌看板</title>
+<style>
+:root{--bg:#0b0b0b;--board:#141414;--tile:#202020;--edge:#383838;--gold:#f0c040;--dim:#aaa;--ink:#fff}
+*{box-sizing:border-box}body{font-family:"Courier New",monospace,system-ui,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:12px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+#openPipBtn{border:1px solid #5b4c29;background:#292318;color:var(--gold);padding:9px 14px;border-radius:5px;margin-bottom:12px;font-size:13px;cursor:pointer}
+.widget{width:100%;max-width:440px;border:2px solid #424242;border-radius:7px;background:var(--board);padding:12px;box-shadow:0 8px 26px #000b}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#b6a16c;font-size:11px}
+select{background:#242424;color:#f3ce6b;border:1px solid #555;border-radius:4px;padding:5px}
+.head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:12px 0;border-bottom:1px solid #444;padding-bottom:12px}
+.head strong{text-align:center;font-size:17px;letter-spacing:1px;color:var(--gold)}
+.nav{border:1px solid #555;background:#252525;color:var(--gold);font-size:20px;border-radius:4px;padding:5px 11px;cursor:pointer}
+.board-heading{display:grid;grid-template-columns:88px 82px minmax(0,1fr);gap:5px;color:#9a9a9a;font-size:11px;padding:4px 1px 8px}
+.flight-row{display:grid;grid-template-columns:88px 82px minmax(0,1fr);gap:5px;align-items:stretch;border-top:1px solid #393939;padding:9px 1px}
+.flap-group{display:flex;align-items:center;gap:2px;min-width:0}
+.flap{position:relative;min-width:15px;height:30px;display:flex;align-items:center;justify-content:center;background:linear-gradient(#292929 0 49%,#151515 50% 100%);color:var(--gold);border:1px solid #333;border-radius:3px;box-shadow:0 3px 3px #000;font-size:18px;font-weight:700;line-height:30px;overflow:hidden;perspective:170px}
+.flap:after,.dest:after{position:absolute;content:"";height:1px;background:#050505;top:50%;left:0;right:0;pointer-events:none}
+.flap.animate,.dest.animate{animation:flip .55s ease-in-out backwards}
+@keyframes flip{0%{transform:rotateX(-80deg);opacity:.2}100%{transform:rotateX(0);opacity:1}}
+.flightno{display:flex;align-items:center;font-weight:700;font-size:13px;letter-spacing:-.4px;white-space:nowrap;color:#f4f0e6;overflow:hidden;text-overflow:ellipsis;background:#222;border:1px solid #363636;border-radius:3px;padding:0 5px}
+.dest{position:relative;background:linear-gradient(#242424 0 49%,#161616 50% 100%);color:var(--gold);min-width:0;border:1px solid #333;border-radius:3px;font-size:13px;font-weight:700;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 5px}
+.empty{border-top:1px solid #3d3d3d;padding:22px 9px;line-height:1.7;text-align:center;color:#bfbfbf;font-size:12px}
+.foot{border-top:1px solid #444;margin-top:9px;padding-top:10px;color:var(--dim);font-size:11px;display:flex;flex-direction:column;gap:5px}
+.footline{display:flex;justify-content:space-between;gap:8px;align-items:center}
+#localRefresh{background:none;border:1px solid #555;border-radius:4px;color:var(--gold);font-size:11px;padding:5px;cursor:pointer}
+.warning{color:#ecc374}
+@media(max-width:370px){body{padding:4px}.widget{padding:7px}.board-heading,.flight-row{grid-template-columns:82px 77px minmax(0,1fr);gap:3px}.flap{min-width:14px;font-size:17px}.dest{font-size:11px}.flightno{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.flap.animate,.dest.animate{animation:none}}
+</style>
 </head>
 <body>
-
-  <button id="openPipBtn" class="btn-pip">📌 開啟桌面置頂懸浮窗</button>
-
-  <div id="widget" class="widget-container">
-    <div class="top-bar">
-      <span style="color: #64748b;">✈ Live Departures</span>
-      <select id="langSelect" class="lang-select">
-        <option value="ja">日本語</option>
-        <option value="zh">繁體中文</option>
-        <option value="en">English</option>
-      </select>
-    </div>
-
-    <div class="header">
-      <button class="nav-btn" id="prevBtn">◄</button>
-      <div class="airport-title" id="airportName">--</div>
-      <button class="nav-btn" id="nextBtn">►</button>
-    </div>
-
-    <table>
-      <thead>
-        <tr id="tableHeader">
-          <th class="col-time">定刻</th>
-          <th class="col-flight">便名</th>
-          <th class="col-dest">行先</th>
-        </tr>
-      </thead>
-      <tbody id="flightTableBody">
-        <tr><td colspan="3" style="text-align:center; color:#94a3b8;">Loading...</td></tr>
-      </tbody>
-    </table>
-
-    <div class="footer">
-      <div>
-        <span id="updateTime">更新: --:--</span>
-        <button class="refresh-btn" id="manualRefreshBtn">🔄</button>
-      </div>
-      <span style="color: #475569;">台日專用免 Key 版</span>
-    </div>
+<button id="openPipBtn">📌 開啟桌面置頂懸浮窗</button>
+<main class="widget" id="widget">
+  <div class="top"><span>DEPARTURES / DAILY SNAPSHOT</span><select id="language" aria-label="顯示語言"><option value="zh">繁體中文</option><option value="ja">日本語</option><option value="en">English</option></select></div>
+  <div class="head"><button class="nav" id="previous" aria-label="前一個機場">◀</button><strong id="airportName">--</strong><button class="nav" id="next" aria-label="下一個機場">▶</button></div>
+  <div class="board-heading"><span id="hTime">時間</span><span id="hFlight">航班</span><span id="hDest">目的地</span></div>
+  <div id="flightRows" aria-live="polite"><div class="empty">讀取本日資料中…</div></div>
+  <div class="foot">
+    <div class="footline"><span id="cacheStatus">尚未讀取</span><button id="localRefresh">只更新畫面 ↻</button></div>
+    <span id="updatedAt">抓取時間：--</span>
+    <span class="warning" id="disclaimer">每日班表快照，非即時延誤資訊。</span>
   </div>
-
-  <script>
-    // -------------------------------------------------------------
-    // 多國語言字典（解決 API 只回傳英文地名與標題的問題）
-    // -------------------------------------------------------------
-    const AIRPORT_NAMES = {
-      HND: { ja: '東京羽田 (HND)', zh: '東京羽田 (HND)', en: 'Tokyo Haneda (HND)' },
-      TPE: { ja: '台北桃園 (TPE)', zh: '台北桃園 (TPE)', en: 'Taipei Taoyuan (TPE)' },
-      TSA: { ja: '台北松山 (TSA)', zh: '台北松山 (TSA)', en: 'Taipei Songshan (TSA)' }
-    };
-
-    const CITY_DICT = {
-      ja: { 'HND': '羽田', 'NRT': '成田', 'KIX': '関西', 'TPE': '台北桃園', 'TSA': '台北松山', 'KHH': '高雄', 'CTS': '札幌', 'FUK': '福岡', 'NGO': '中部', 'OKA': '沖縄', 'HKG': '香港', 'ICN': '仁川', 'BKK': 'バンコク', 'SIN': 'シンガポール', 'LHR': 'ロンドン', 'CDG': 'パリ' },
-      zh: { 'HND': '東京羽田', 'NRT': '東京成田', 'KIX': '大阪關西', 'TPE': '台北桃園', 'TSA': '台北松山', 'KHH': '高雄小港', 'CTS': '札幌新千歲', 'FUK': '福岡', 'NGO': '名古屋中部', 'OKA': '沖繩那霸', 'HKG': '香港', 'ICN': '首爾仁川', 'BKK': '曼谷', 'SIN': '新加坡', 'LHR': '倫敦', 'CDG': '巴黎' },
-      en: { 'HND': 'Tokyo Haneda', 'NRT': 'Tokyo Narita', 'KIX': 'Osaka Kansai', 'TPE': 'Taipei Taoyuan', 'TSA': 'Taipei Songshan', 'KHH': 'Kaohsiung', 'CTS': 'Sapporo', 'FUK': 'Fukuoka', 'NGO': 'Nagoya', 'OKA': 'Okinawa', 'HKG': 'Hong Kong', 'ICN': 'Seoul Incheon' }
-    };
-
-    const i18n = {
-      ja: { pipBtn: '📌 最前面に表示 (PiP)', headers: ['定刻', '便名', '行先'], update: '更新' },
-      zh: { pipBtn: '📌 開啟桌面置頂懸浮窗', headers: ['時間', '航班', '目的地'], update: '更新' },
-      en: { pipBtn: '📌 Pin to Desktop', headers: ['Time', 'Flight', 'Destination'], update: 'Updated' }
-    };
-
-    const selectedAirports = [
-      { code: 'HND', icao: 'RJTT', region: 'JP', timeZone: 'Asia/Tokyo' },
-      { code: 'TPE', icao: 'RCTP', region: 'TW', timeZone: 'Asia/Taipei' },
-      { code: 'TSA', icao: 'RCSS', region: 'TW', timeZone: 'Asia/Taipei' }
-    ];
-
-    let currentIndex = 0;
-    let currentLang = 'ja';
-
-    // 計算指定時區當前時間 (HH:mm)
-    function getAirportLocalTimeStr(timeZone) {
-      const now = new Date();
-      const options = { timeZone, hour12: false, hour: '2-digit', minute: '2-digit' };
-      const parts = new Intl.DateTimeFormat('en-GB', options).formatToParts(now);
-      const v = {};
-      parts.forEach(p => v[p.type] = p.value);
-      return `${v.hour}:${v.minute}`;
-    }
-
-    // 主資料抓取門戶：分流台灣與日本 API
-    async function fetchFlightData() {
-      const ap = selectedAirports[currentIndex];
-      renderLoading();
-
-      try {
-        let flights = [];
-        if (ap.region === 'TW') {
-          flights = await fetchTaiwanTDX(ap.code);
-        } else {
-          flights = await fetchJapanFlightradar(ap.code);
-        }
-
-        filterAndRender(flights, ap);
-        updateTimestamp();
-      } catch (e) {
-        console.error("Fetch Error:", e);
-        renderFlights([], '資料讀取失敗');
-      }
-    }
-
-    // 1. 台灣機場 API：使用台灣政府 TDX 免費開放資料 API
-    async function fetchTaiwanTDX(airportCode) {
-      const url = `https://tdx.transportdata.tw/api/basic/v2/Air/FIDS/Airport/Departure/${airportCode}?$top=30&$format=JSON`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('TDX API Error');
-      const data = await res.json();
-
-      return data.map(f => {
-        // 時間處理
-        const schTime = f.ScheduleDepartureTime || f.TargetDepartureTime || '';
-        const timeStr = schTime ? schTime.substring(11, 16) : '--:--';
-        
-        // 班號處理
-        const code = `${f.AirlineID || ''}${f.FlightNumber || ''}`;
-        
-        // 共掛判斷
-        const isCodeshare = !!f.MasterFlightNumber && f.MasterFlightNumber !== f.FlightNumber;
-        
-        // 目的地 IATA 代碼
-        const destCode = f.ArrivalAirportID || '';
-        const destNameRaw = f.ArrivalAirportName ? (f.ArrivalAirportName.Zh_tw || f.ArrivalAirportName.En || '') : destCode;
-
-        return {
-          time: timeStr,
-          code: code,
-          destCode: destCode,
-          destNameRaw: destNameRaw,
-          isCodeshare: isCodeshare
-        };
-      });
-    }
-
-    // 2. 日本機場 API：使用公共開放 API endpoint
-    async function fetchJapanFlightradar(airportIATA) {
-      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://api.flightradar24.com/common/v1/airport.json?code=${airportIATA}&plugin[]=&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=${Math.floor(Date.now()/1000)}&page=1&limit=25`)}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('Japan API Error');
-      const json = await res.json();
-      
-      const list = json.result.response.airport.pluginData.schedule.departures.data || [];
-
-      return list.map(item => {
-        const f = item.flight;
-        const schTime = f.time.scheduled.departure;
-        let timeStr = '--:--';
-        if (schTime) {
-          const d = new Date(schTime * 1000);
-          // 轉為日本 JST 時間 (HH:mm)
-          timeStr = d.toLocaleTimeString('en-GB', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit' });
-        }
-
-        const code = f.identification.number.default || '--';
-        const isCodeshare = !!(f.codeshare && f.codeshare.length > 0);
-        const destCode = f.airport.destination ? f.airport.destination.code.iata : '';
-        const destNameRaw = f.airport.destination ? f.airport.destination.name : '';
-
-        return {
-          time: timeStr,
-          code: code,
-          destCode: destCode,
-          destNameRaw: destNameRaw,
-          isCodeshare: isCodeshare
-        };
-      });
-    }
-
-    // 依「當地現在時間」過濾 + 去除共掛班號
-    function filterAndRender(fullList, ap) {
-      const curLocalTime = getAirportLocalTimeStr(ap.timeZone);
-
-      // 1. 去除共掛班號
-      let clean = fullList.filter(f => !f.isCodeshare);
-
-      // 2. 篩選晚於「機場當地現在時間」的班次
-      let upcoming = clean.filter(f => f.time >= curLocalTime);
-
-      // 班次過少時補齊
-      if (upcoming.length < 5) {
-        upcoming = upcoming.concat(clean);
-      }
-
-      // 3. 去重並取前 5 筆
-      const displayFlights = [];
-      const seen = new Set();
-      for (const f of upcoming) {
-        const key = `${f.time}_${f.destCode}`;
-        if (!seen.has(key)) {
-          seen.add(key);
-          displayFlights.push(f);
-        }
-        if (displayFlights.length >= 5) break;
-      }
-
-      renderFlights(displayFlights);
-    }
-
-    // 轉換目的地顯示名稱（優先匹配字典檔）
-    function getTranslatedDest(destCode, destNameRaw) {
-      const dict = CITY_DICT[currentLang] || {};
-      if (dict[destCode]) {
-        return `${destCode} ${dict[destCode]}`;
-      }
-      return destCode ? `${destCode} ${destNameRaw}` : destNameRaw;
-    }
-
-    function renderWidget() {
-      const ap = selectedAirports[currentIndex];
-      const nameObj = AIRPORT_NAMES[ap.code];
-      const displayName = nameObj ? (nameObj[currentLang] || nameObj.en) : ap.code;
-      
-      document.getElementById('airportName').innerText = `✈ ${displayName}`;
-      fetchFlightData();
-    }
-
-    function renderLoading() {
-      document.getElementById('flightTableBody').innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8;">Loading...</td></tr>`;
-    }
-
-    function renderFlights(flights, msg = 'No Departures') {
-      const tbody = document.getElementById('flightTableBody');
-      if (!flights || flights.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8;">${msg}</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = flights.map(f => {
-        const destDisplay = getTranslatedDest(f.destCode, f.destNameRaw);
-        return `
-          <tr>
-            <td class="col-time">${f.time}</td>
-            <td class="col-flight">${f.code}</td>
-            <td class="col-dest" title="${destDisplay}">${destDisplay}</td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function updateTimestamp() {
-      const now = new Date();
-      const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-      const t = i18n[currentLang] || i18n.ja;
-      document.getElementById('updateTime').innerText = `${t.update}: ${timeStr}`;
-    }
-
-    function updateLanguageUI() {
-      const t = i18n[currentLang] || i18n.ja;
-      document.getElementById('openPipBtn').innerText = t.pipBtn;
-      const ths = document.querySelectorAll('#tableHeader th');
-      t.headers.forEach((h, idx) => { if(ths[idx]) ths[idx].innerText = h; });
-      renderWidget();
-    }
-
-    function attachEventListeners(targetDoc) {
-      targetDoc.addEventListener('click', (e) => {
-        if (e.target.id === 'nextBtn') {
-          currentIndex = (currentIndex + 1) % selectedAirports.length;
-          renderWidget();
-        } else if (e.target.id === 'prevBtn') {
-          currentIndex = (currentIndex - 1 + selectedAirports.length) % selectedAirports.length;
-          renderWidget();
-        } else if (e.target.id === 'manualRefreshBtn') {
-          fetchFlightData();
-        }
-      });
-
-      targetDoc.addEventListener('change', (e) => {
-        if (e.target.id === 'langSelect') {
-          currentLang = e.target.value;
-          updateLanguageUI();
-        }
-      });
-    }
-
-    attachEventListeners(document);
-
-    // Desktop PiP (Picture-in-Picture) 置頂功能
-    document.getElementById('openPipBtn').addEventListener('click', async () => {
-      if ('documentPictureInPicture' in window) {
-        const pipWindow = await window.documentPictureInPicture.requestWindow({ width: 350, height: 220 });
-        [...document.styleSheets].forEach((styleSheet) => {
-          try {
-            const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join('');
-            const style = document.createElement('style');
-            style.textContent = cssRules;
-            pipWindow.document.head.appendChild(style);
-          } catch (e) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = styleSheet.href;
-            pipWindow.document.head.appendChild(link);
-          }
-        });
-
-        const widget = document.getElementById('widget');
-        pipWindow.document.body.appendChild(widget);
-        attachEventListeners(pipWindow.document);
-
-        pipWindow.addEventListener('unload', () => {
-          document.body.appendChild(widget);
-        });
-      } else {
-        alert('請使用 Chrome 或 Edge 瀏覽器開啟。');
-      }
-    });
-
-    updateLanguageUI();
-  </script>
+</main>
+<script>
+"use strict";
+// 一天一個機場「每個瀏覽器裝置」最多嘗試一次；若要所有用戶共用一次，需另外設置伺服器端每日快取。
+const AIRPORTS=[
+  {code:"HND",name:{zh:"東京羽田",ja:"東京羽田",en:"Tokyo Haneda"},tz:"Asia/Tokyo",source:"pending"},
+  {code:"TPE",name:{zh:"桃園國際機場",ja:"台北桃園",en:"Taoyuan"},tz:"Asia/Taipei",source:"TDX"},
+  {code:"TSA",name:{zh:"台北松山機場",ja:"台北松山",en:"Songshan"},tz:"Asia/Taipei",source:"TDX"}
+];
+const I18N={
+  zh:{headers:["時間","航班","目的地"],refresh:"只更新畫面 ↻",waiting:"讀取本日資料中…",none:"快取中沒有剩餘的今日航班。",missing:"羽田目前沒有已授權且允許快取的班表資料來源；暫停使用原來的非正式 FR24 介面。",failed:"本日取得資料失敗，為節省 API 額度，今天不會自動重試。",status:"本日快取",attempt:"今日已嘗試",cached:"已讀取",at:"抓取時間",note:"每日班表快照，非即時延誤／取消資訊。",partial:"資料可能不完整（達到單次取回筆數上限）。",storage:"瀏覽器未開放本地儲存，為避免重複耗用額度，沒有連接 API。",source:"本日快取"},
+  ja:{headers:["時刻","便名","行先"],refresh:"表示だけ更新 ↻",waiting:"読み込み中…",none:"本日分の今後の便がありません。",missing:"羽田の許諾済み時刻表ソースは未設定。非公式 FR24 API は停止しました。",failed:"本日取得失敗。API 節約のため再試行しません。",status:"本日キャッシュ",attempt:"本日取得試行済み",cached:"取得済み",at:"取得時刻",note:"一日一回の時刻表です。遅延・欠航の速報ではありません。",partial:"取得上限に達したため一部欠ける可能性があります。",storage:"ローカル保存を利用できないため API を呼び出しません。",source:"保存データ"},
+  en:{headers:["Time","Flight","Destination"],refresh:"Refresh view only ↻",waiting:"Loading daily data…",none:"No further flights in today's snapshot.",missing:"No licensed cacheable Haneda schedule configured; unofficial FR24 endpoint disabled.",failed:"Today's fetch failed; no automatic retry to save API quota.",status:"Daily cache",attempt:"Attempted today",cached:"Loaded",at:"Fetched",note:"Daily timetable snapshot, not live delay/cancellation information.",partial:"Some flights may be missing due to source result limit.",storage:"Local storage is unavailable; API fetch is blocked to prevent repeated usage.",source:"Daily snapshot"}
+};
+const DEST={
+  zh:{HND:"東京羽田",NRT:"東京成田",KIX:"大阪關西",KHH:"高雄",HKG:"香港",ICN:"首爾仁川",OKA:"沖繩那霸",FUK:"福岡",CTS:"札幌新千歲",TSA:"台北松山",TPE:"桃園"},
+  ja:{HND:"羽田",NRT:"成田",KIX:"関西",KHH:"高雄",HKG:"香港",ICN:"仁川",OKA:"那覇",FUK:"福岡",CTS:"新千歳",TSA:"松山",TPE:"桃園"},
+  en:{HND:"Haneda",NRT:"Narita",KIX:"Kansai",KHH:"Kaohsiung",HKG:"Hong Kong",ICN:"Incheon",OKA:"Okinawa",FUK:"Fukuoka",CTS:"Sapporo",TSA:"Songshan",TPE:"Taoyuan"}
+};
+let airportIndex=0,lang="zh",shownKey="",currentDay="",loading=false;
+const CACHE_PREFIX="airport-daily-v3:";
+function el(id){return document.getElementById(id)}
+function partsNow(tz,instant=new Date()){
+  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(instant);
+  const v={};parts.forEach(p=>v[p.type]=p.value);
+  return {date:v.year+"-"+v.month+"-"+v.day,time:v.hour+":"+v.minute};
+}
+function readCache(key){try{return JSON.parse(localStorage.getItem(key)||"null")}catch{return null}}
+function writeCache(key,val){try{localStorage.setItem(key,JSON.stringify(val));return true}catch{return false}}
+function storageAvailable(){try{const k=CACHE_PREFIX+"probe";localStorage.setItem(k,"1");localStorage.removeItem(k);return true}catch{return false}}
+function cacheKey(ap,date){return CACHE_PREFIX+ap.code+":"+date}
+function formatClock(ms,tz){return new Intl.DateTimeFormat("en-GB",{timeZone:tz,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(ms))}
+function sourceTime(raw){
+  if(raw==null)return NaN;
+  const s=String(raw).trim();
+  if(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(s))return Date.parse(s+"+08:00");
+  return Date.parse(s);
+}
+function clearOldCache(ap,date){
+  try{for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith(CACHE_PREFIX+ap.code+":")&&k!==cacheKey(ap,date))localStorage.removeItem(k)}}catch{}
+}
+function normalizeTDX(item,ap,date){
+  const raw=item.ScheduleDepartureTime||item.TargetDepartureTime||"";
+  const ms=sourceTime(raw);
+  if(!Number.isFinite(ms)||partsNow(ap.tz,new Date(ms)).date!==date)return null;
+  const code=String(item.AirlineID||"")+String(item.FlightNumber||"");
+  if(!code.trim())return null;
+  const master=String(item.MasterFlightNumber||"");
+  if(master&&master!==String(item.FlightNumber||""))return null;
+  const destCode=String(item.ArrivalAirportID||"");
+  const destRaw=item.ArrivalAirportName||{};
+  const name=typeof destRaw==="string"?destRaw:String(destRaw.Zh_tw||destRaw.En||destCode);
+  return {timeMs:ms,code,destCode,destName:name};
+}
+async function fetchTDX(ap,date){
+  const url="https://tdx.transportdata.tw/api/basic/v2/Air/FIDS/Airport/Departure/"+ap.code+"?%24top=1000&%24format=JSON";
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),15000);
+  try{
+    const r=await fetch(url,{signal:controller.signal,cache:"no-store"});
+    if(!r.ok)throw Error("HTTP "+r.status);
+    const rows=await r.json();
+    if(!Array.isArray(rows))throw Error("Unexpected TDX response");
+    const unique=new Map();
+    rows.forEach(x=>{const f=normalizeTDX(x,ap,date);if(f)unique.set(f.code+"|"+f.timeMs+"|"+f.destCode,f)});
+    return {flights:[...unique.values()].sort((a,b)=>a.timeMs-b.timeMs),partial:rows.length>=1000,source:"TDX",fetchedAt:new Date().toISOString(),state:"ok",date};
+  }finally{clearTimeout(timeout)}
+}
+function renderEmpty(message){
+  const box=document.createElement("div");box.className="empty";box.textContent=message;
+  el("flightRows").replaceChildren(box);
+}
+function flapClock(time,animate){
+  const container=document.createElement("div");container.className="flap-group";
+  [...time].forEach((char,i)=>{const unit=document.createElement("span");unit.className="flap"+(animate?" animate":"");unit.textContent=char;unit.style.animationDelay=(i*45)+"ms";container.appendChild(unit)});
+  return container;
+}
+function renderBoard(){
+  const ap=AIRPORTS[airportIndex],t=I18N[lang],now=new Date(),date=partsNow(ap.tz,now).date;
+  el("airportName").textContent=ap.name[lang]+" ("+ap.code+")";
+  ["hTime","hFlight","hDest"].forEach((id,i)=>el(id).textContent=t.headers[i]);
+  el("localRefresh").textContent=t.refresh;
+  el("disclaimer").textContent=t.note;
+  if(ap.source==="pending"){renderEmpty(t.missing);el("cacheStatus").textContent="HND: --";el("updatedAt").textContent=t.at+": --";return}
+  if(!storageAvailable()){renderEmpty(t.storage);el("cacheStatus").textContent="--";return}
+  const snapshot=readCache(cacheKey(ap,date));
+  if(!snapshot){renderEmpty(t.waiting);el("cacheStatus").textContent=t.status+": --";el("updatedAt").textContent=t.at+": --";return}
+  el("updatedAt").textContent=t.at+": "+(snapshot.fetchedAt?formatClock(Date.parse(snapshot.fetchedAt),ap.tz)+" ("+ap.tz+")":"--");
+  if(snapshot.state==="attempt"){renderEmpty(t.waiting);el("cacheStatus").textContent=t.attempt;return}
+  if(snapshot.state==="error"){renderEmpty(t.failed);el("cacheStatus").textContent=t.attempt;return}
+  el("cacheStatus").textContent=t.cached+" "+(snapshot.flights||[]).length+" "+(snapshot.partial?"⚠ "+t.partial:"");
+  const upcoming=(snapshot.flights||[]).filter(f=>Number(f.timeMs)>=now.getTime()).sort((a,b)=>a.timeMs-b.timeMs).slice(0,5);
+  const nextKey=ap.code+"|"+date+"|"+upcoming.map(f=>f.code+":"+f.timeMs).join(",");
+  const animate=shownKey!==nextKey;shownKey=nextKey;
+  if(!upcoming.length){renderEmpty(t.none);return}
+  const fragment=document.createDocumentFragment();
+  upcoming.forEach((f,rowIndex)=>{
+    const row=document.createElement("div");row.className="flight-row";
+    row.appendChild(flapClock(formatClock(f.timeMs,ap.tz),animate));
+    const flight=document.createElement("span");flight.className="flightno";flight.textContent=f.code;row.appendChild(flight);
+    const dest=document.createElement("span");dest.className="dest"+(animate?" animate":"");
+    dest.style.animationDelay=(rowIndex*70)+"ms";
+    dest.textContent=(f.destCode?(f.destCode+" "):"")+(DEST[lang][f.destCode]||f.destName||"--");
+    dest.title=dest.textContent;row.appendChild(dest);
+    fragment.appendChild(row);
+  });
+  el("flightRows").replaceChildren(fragment);
+}
+async function ensureDailySnapshot(){
+  const ap=AIRPORTS[airportIndex],date=partsNow(ap.tz).date;
+  if(ap.source==="pending"){renderBoard();return}
+  if(!storageAvailable()){renderBoard();return}
+  const key=cacheKey(ap,date);
+  if(readCache(key)){renderBoard();return}
+  // 先鎖定當日請求；失敗也不自動重試，避免用完配額。
+  if(!writeCache(key,{state:"attempt",date,fetchedAt:new Date().toISOString()})){renderBoard();return}
+  renderBoard();
+  try{
+    const snapshot=await fetchTDX(ap,date);
+    writeCache(key,snapshot);
+  }catch(err){
+    console.warn("TDX daily fetch failed (will not retry today)",err);
+    writeCache(key,{state:"error",date,fetchedAt:new Date().toISOString()});
+  }
+  if(AIRPORTS[airportIndex].code===ap.code)renderBoard();
+}
+function changeAirport(delta){
+  airportIndex=(airportIndex+delta+AIRPORTS.length)%AIRPORTS.length;
+  shownKey="";
+  const ap=AIRPORTS[airportIndex],date=partsNow(ap.tz).date;currentDay=ap.code+":"+date;
+  clearOldCache(ap,date);ensureDailySnapshot();
+}
+function listen(doc){
+  doc.addEventListener("click",event=>{
+    if(event.target.id==="previous")changeAirport(-1);
+    if(event.target.id==="next")changeAirport(1);
+    if(event.target.id==="localRefresh")renderBoard(); // no network call
+  });
+  doc.addEventListener("change",event=>{
+    if(event.target.id==="language"&&I18N[event.target.value]){lang=event.target.value;renderBoard()}
+  });
+}
+listen(document);
+const initial=AIRPORTS[airportIndex];
+currentDay=initial.code+":"+partsNow(initial.tz).date;
+clearOldCache(initial,partsNow(initial.tz).date);ensureDailySnapshot();
+setInterval(()=>{
+  const ap=AIRPORTS[airportIndex],next=ap.code+":"+partsNow(ap.tz).date;
+  if(next!==currentDay){currentDay=next;shownKey="";clearOldCache(ap,partsNow(ap.tz).date);ensureDailySnapshot()}
+  else renderBoard();
+},60000);
+el("openPipBtn").addEventListener("click",async()=>{
+  if(!("documentPictureInPicture" in window)){alert("請使用支援 Document Picture-in-Picture 的桌面 Chrome / Edge");return}
+  try{
+    const pop=await documentPictureInPicture.requestWindow({width:455,height:330});
+    const css=document.createElement("style");css.textContent=[...document.styleSheets].map(s=>{try{return [...s.cssRules].map(r=>r.cssText).join("\n")}catch{return""}}).join("\n");
+    pop.document.head.append(css);pop.document.body.style.cssText="background:#0b0b0b;padding:5px;margin:0";
+    pop.document.body.appendChild(el("widget"));listen(pop.document);
+    pop.addEventListener("unload",()=>document.body.appendChild(el("widget")));
+  }catch(err){console.error(err);alert("無法開啟懸浮窗")}
+});
+</script>
 </body>
 </html>
