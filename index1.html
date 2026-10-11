@@ -226,7 +226,8 @@ function makeQuery(startMs,endMs){
  const p=new URLSearchParams();
  // Two local calendar days when a twelve-hour window crosses midnight.
  // TDX FIDS Airport TPE covers previous/current/next day.
- p.set("$filter","FlightDate ge '"+dateLocal(startMs)+"' and FlightDate le '"+dateLocal(endMs)+"'");
+ const dates=[...new Set([dateLocal(startMs),dateLocal(endMs)])];
+ p.set("$filter",dates.map(date=>"date(FlightDate) eq "+date).join(" or "));
  p.set("$orderby","ScheduleDepartureTime asc");
  p.set("$top","1600");
  p.set("$format","JSON");
