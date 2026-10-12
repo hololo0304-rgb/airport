@@ -86,7 +86,7 @@ h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
      <div id="namesCoverage">名稱完整率檢查中…</div>
      <div class="footerLine"><button id="copyMissingNames" type="button" class="button">複製所有待補目的地（不查航班）</button><small id="copyNamesStatus" aria-live="polite"></small></div>
      <div id="copyNamesFallback" class="hidden"><label for="missingNamesText">無法自動複製時，請長按下方內容選取並複製：</label><textarea id="missingNamesText" readonly rows="6" style="width:100%;min-height:110px;background:#13161d;color:#e8eef6;border:1px solid #65717d;border-radius:6px;padding:8px;font-size:12px"></textarea></div>
-     <div id="sourceNote">資料來源：AeroDataBox。選取當下的 12 小時快照（國內與國際線），不會自動更新。</div>
+     <div id="sourceNote">資料來源：AeroDataBox。選取當下的 12 小時快照；已要求來源排除共掛班號，但無法判定的航班仍可能保留，不會自動更新。</div>
    </div>
   </div>
  </section>
@@ -103,17 +103,41 @@ let backendReady=false;
 const PROXY_URL="https://script.google.com/macros/s/AKfycbzsvaUzYCtttFUwGcC98ffNAVgQFl0oNBdCKn1g2DOVlGcFSbPgBG-E7TLplzzrePZiuw/exec";
 const POOL_TEXT=`HND|東京羽田|日本|Asia/Tokyo;NRT|東京成田|日本|Asia/Tokyo;KIX|大阪關西|日本|Asia/Tokyo;CTS|札幌新千歲|日本|Asia/Tokyo;FUK|福岡|日本|Asia/Tokyo;ICN|首爾仁川|韓國|Asia/Seoul;HKG|香港國際機場|香港|Asia/Hong_Kong;SIN|新加坡樟宜|新加坡|Asia/Singapore;BKK|曼谷蘇凡納布|泰國|Asia/Bangkok;KUL|吉隆坡|馬來西亞|Asia/Kuala_Lumpur;TPE|桃園國際機場|臺灣|Asia/Taipei;MNL|馬尼拉|菲律賓|Asia/Manila;CGK|雅加達|印尼|Asia/Jakarta;DEL|德里|印度|Asia/Kolkata;DXB|杜拜|阿聯酋|Asia/Dubai;DOH|多哈|卡達|Asia/Qatar;IST|伊斯坦堡|土耳其|Europe/Istanbul;LHR|倫敦希斯洛|英國|Europe/London;LGW|倫敦蓋威克|英國|Europe/London;MAN|曼徹斯特|英國|Europe/London;CDG|巴黎戴高樂|法國|Europe/Paris;AMS|阿姆斯特丹|荷蘭|Europe/Amsterdam;FRA|法蘭克福|德國|Europe/Berlin;MUC|慕尼黑|德國|Europe/Berlin;FCO|羅馬費米齊諾|義大利|Europe/Rome;MAD|馬德里|西班牙|Europe/Madrid;BCN|巴塞隆納|西班牙|Europe/Madrid;HEL|赫爾辛基|芬蘭|Europe/Helsinki;ARN|斯德哥爾摩|瑞典|Europe/Stockholm;OSL|奧斯陸|挪威|Europe/Oslo;CPH|哥本哈根|丹麥|Europe/Copenhagen;JFK|紐約甘迺迪|美國|America/New_York;EWR|紐華克|美國|America/New_York;LAX|洛杉磯|美國|America/Los_Angeles;SFO|舊金山|美國|America/Los_Angeles;SEA|西雅圖|美國|America/Los_Angeles;ORD|芝加哥歐海爾|美國|America/Chicago;ATL|亞特蘭大|美國|America/New_York;DFW|達拉斯沃斯堡|美國|America/Chicago;MIA|邁阿密|美國|America/New_York;YYZ|多倫多|加拿大|America/Toronto;YVR|溫哥華|加拿大|America/Vancouver;MEX|墨西哥城|墨西哥|America/Mexico_City;GRU|聖保羅|巴西|America/Sao_Paulo;SYD|雪梨|澳洲|Australia/Sydney;MEL|墨爾本|澳洲|Australia/Melbourne;BNE|布里斯本|澳洲|Australia/Brisbane;AKL|奧克蘭|紐西蘭|Pacific/Auckland;JNB|約翰尼斯堡|南非|Africa/Johannesburg;CAI|開羅|埃及|Africa/Cairo`;
 
-const TRILINGUAL_URL="./airport_names.json?v=20261012-356";
+const TRILINGUAL_URL="./airport_names.json?v=20261012-368-alias";
 const NAMES_KEY="airport-translation-cache-v1:";
-let trilingual={},namesLookupPending=false,namesAttempted=new Set();
+let trilingual={},nameAliases={},namesLookupPending=false,namesAttempted=new Set();
 function goodName(v){return v&&["zh","ja","en"].every(k=>typeof v[k]==="string"&&v[k].trim())}
 function hasChinese(v){return /[\u3400-\u9fff]/.test(String(v||""))}
 function nameByCode(c){return trilingual[c]||null}
+function normalizedPlaceName(v){return String(v||"").trim().toLowerCase().replace(/\s+/g," ")}
+function verifiedNamesFor(record){
+ const code=String(record?.destCode||"").trim().toUpperCase();
+ const names=nameByCode(code);
+ if(goodName(names)&&hasChinese(names.zh))return [names.zh,names.ja,names.en];
+ const built=DEST[code];
+ if(built&&hasChinese(built[0])&&built[1]&&built[2])return built;
+ const alias=nameAliases[normalizedPlaceName(record?.en||record?.zh)];
+ if(goodName(alias)&&hasChinese(alias.zh))return [alias.zh,alias.ja,alias.en];
+ return null;
+}
+function distinctDestinationRecords(flights){
+ const seen=new Map();
+ for(const record of flights||[]){
+  const code=String(record.destCode||"").trim().toUpperCase();
+  const english=String(record.en||record.zh||"").trim();
+  const key=/^[A-Z0-9]{3}$/.test(code)?"IATA:"+code:english?"NAME:"+normalizedPlaceName(english):"";
+  if(key&&!seen.has(key))seen.set(key,record);
+ }
+ return [...seen.values()];
+}
+function missingDestinationRecords(flights){return distinctDestinationRecords(flights).filter(f=>!verifiedNamesFor(f))}
+
 async function loadAirportNames(){
  try{
   const r=await fetch(TRILINGUAL_URL,{cache:"no-cache"});if(!r.ok)throw Error("name file HTTP "+r.status);
   const d=await r.json();
   for(const [c,v] of Object.entries(d.airports||{}))if(/^[A-Z]{3}$/.test(c)&&goodName(v))trilingual[c]=v;
+  for(const [key,v] of Object.entries(d.nameAliases||{}))if(goodName(v))nameAliases[normalizedPlaceName(key)]=v;
   try{
    const saved=JSON.parse(localStorage.getItem(NAMES_KEY)||"{}");
    for(const [c,v] of Object.entries(saved))if(!trilingual[c]&&goodName(v))trilingual[c]=v;
@@ -123,12 +147,15 @@ async function loadAirportNames(){
 }
 function auditNames(){
  if(!snapshot||!Array.isArray(snapshot.flights))return;
- const codes=[...new Set(snapshot.flights.map(f=>String(f.destCode||"").toUpperCase()).filter(c=>/^[A-Z]{3}$/.test(c)))];
- const missing=codes.filter(c=>!trilingual[c]&&!DEST[c]);
- const known=codes.filter(c=>hasChinese(trilingual[c]?.zh||DEST[c]?.[0]||snapshot.flights.find(f=>f.destCode===c)?.zh)).length;
- const box=byId("namesCoverage");if(box)box.textContent="中文名稱覆蓋："+known+"/"+codes.length+"；未完成三語："+(missing.join("、")||"無");
- const notTried=missing.filter(c=>!namesAttempted.has(c));
- if(notTried.length&&!namesLookupPending)batchAirportNames(notTried.slice(0,30));
+ const all=distinctDestinationRecords(snapshot.flights);
+ const missing=all.filter(f=>!verifiedNamesFor(f));
+ const withoutCode=all.filter(f=>!/^[A-Z0-9]{3}$/.test(String(f.destCode||"").toUpperCase()));
+ const labels=missing.map(f=>String(f.destCode||"").toUpperCase()||("無 IATA："+String(f.en||f.zh||"未知"))).slice(0,45);
+ byId("namesCoverage").textContent="已具備完整三語："+(all.length-missing.length)+"/"+all.length+
+  "；未完成："+(labels.join("、")||"無")+
+  (withoutCode.length?"；其中 "+withoutCode.length+" 個目的地無 IATA 代碼":"");
+ const newCodes=missing.map(f=>String(f.destCode||"").toUpperCase()).filter(c=>/^[A-Z]{3}$/.test(c)&&!namesAttempted.has(c));
+ if(newCodes.length&&!namesLookupPending)batchAirportNames(newCodes.slice(0,30));
 }
 async function batchAirportNames(codes){
  namesLookupPending=true;codes.forEach(c=>namesAttempted.add(c));
@@ -151,9 +178,7 @@ async function batchAirportNames(codes){
   namesLookupPending=false;
   if(snapshot){
     renderFingerprint="";displaySnapshot();
-    const all=[...new Set(snapshot.flights.map(f=>String(f.destCode||"").toUpperCase()).filter(c=>/^[A-Z]{3}$/.test(c)))];
-    const missing=all.filter(c=>!trilingual[c]&&!DEST[c]),known=all.filter(c=>hasChinese(trilingual[c]?.zh||DEST[c]?.[0]||snapshot.flights.find(f=>f.destCode===c)?.zh)).length;
-    byId("namesCoverage").textContent="中文名稱覆蓋："+known+"/"+all.length+"；未完成三語："+(missing.join("、")||"無");
+    auditNames();
   }
  }
 }
@@ -292,14 +317,12 @@ function empty(message){
 }
 // Use the trilingual airport dictionary, then known labels, then factual English fallback.
 function translate(record){
- const code=String(record?.destCode||"").trim().toUpperCase();
- const names=nameByCode(code);
- if(names&&goodName(names))return [names.zh,names.ja,names.en];
- const builtin=DEST[code];
- if(builtin)return builtin;
+ const verified=verifiedNamesFor(record);
+ if(verified)return verified;
+ const code=String(record?.destCode||"").toUpperCase();
  const english=String(record?.en||record?.zh||code||"Unknown");
  const chinese=hasChinese(record?.zh)?String(record.zh):english;
- return [chinese,english,english]; // Never invent missing Japanese translation.
+ return [chinese,english,english]; // Missing Japanese names remain visibly missing.
 }
 function jsonp(action,airport){
  return new Promise((resolve,reject)=>{
@@ -418,7 +441,7 @@ function updateTranslation(){
    const names=translate(dest._flight);
    const name=names[langIndex]||names[2];
    const code=String(dest._flight.destCode||"").toUpperCase();
-   const known=!!(nameByCode(code)||DEST[code]);
+   const known=!!verifiedNamesFor(dest._flight);
    const languageTag=["中","日","EN"][langIndex];
    const missing=(langIndex!==2&&!known)?" · 待補":"";
    text.textContent=languageTag+" · "+(code?code+" ":"")+name+missing;
@@ -465,18 +488,15 @@ function displaySnapshot(){
 }
 function missingDestinationNamesText(){
  if(!snapshot||!Array.isArray(snapshot.flights))return "";
- const map=new Map();
- for(const flight of snapshot.flights){
-  const code=String(flight.destCode||"").toUpperCase().trim();
-  if(!/^[A-Z0-9]{3}$/.test(code))continue;
-  const name=String(flight.en||flight.zh||code).trim().replace(/[\r\n\t|]+/g," ").slice(0,100);
-  if(!map.has(code))map.set(code,name);
- }
- const missing=[...map.entries()].filter(([code])=>!goodName(nameByCode(code))&&!DEST[code]).sort((a,b)=>a[0].localeCompare(b[0]));
- return "世界機場目的地三語待補｜"+snapshot.code+"｜"+map.size+" 個目的地｜缺 "+missing.length+" 個\n"+
-  "IATA | English Name\n"+missing.map(([code,name])=>code+" | "+name).join("\n");
+ const all=distinctDestinationRecords(snapshot.flights),missing=missingDestinationRecords(snapshot.flights);
+ const entries=missing.map(f=>{
+  const code=String(f.destCode||"").toUpperCase();
+  const name=String(f.en||f.zh||code||"未知").replace(/[\\r\n\\t|]+/g," ").slice(0,100);
+  return (code||"無 IATA")+" | "+name;
+ }).sort();
+ return "世界機場目的地三語待補｜"+snapshot.code+"｜"+all.length+" 個目的地｜缺 "+missing.length+" 個\n"+
+  "IATA | English Name\n"+entries.join("\n");
 }
-
 async function copyMissingDestinationNames(){
  const status=byId("copyNamesStatus"),fallback=byId("copyNamesFallback"),textArea=byId("missingNamesText");
  const text=missingDestinationNamesText();
