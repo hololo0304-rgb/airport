@@ -1,13 +1,59 @@
 {
   "schemaVersion": 1,
   "updated": "2026-10-12",
-  "description": "機場目的地名稱三語對照；靜態核對名稱優先於航班資料來源及 Wikidata 補查。",
+  "description": "Trilingual IATA destination names for world departure board; high-frequency hubs and European/Middle Eastern destinations; missing names never fabricated.",
   "dataSources": [
     "既有 CardHub / Airport 對照表",
     "已核對主要亞洲民航機場名稱",
-    "Wikidata 自動補查僅保存於使用者瀏覽器"
+    "Wikidata 自動補查僅保存於使用者瀏覽器",
+    "Manually curated Traditional Chinese and Japanese common place names for frequent worldwide departure destinations (2026-10-12 expansion)"
   ],
   "airports": {
+    "AAL": {
+      "zh": "奧爾堡",
+      "ja": "オールボー",
+      "en": "Aalborg"
+    },
+    "ABZ": {
+      "zh": "亞伯丁",
+      "ja": "アバディーン",
+      "en": "Aberdeen"
+    },
+    "ACC": {
+      "zh": "阿克拉",
+      "ja": "アクラ",
+      "en": "Accra"
+    },
+    "ACE": {
+      "zh": "蘭薩羅特島",
+      "ja": "ランサローテ",
+      "en": "Lanzarote"
+    },
+    "ADB": {
+      "zh": "伊茲密爾",
+      "ja": "イズミル",
+      "en": "Izmir"
+    },
+    "ADD": {
+      "zh": "阿迪斯阿貝巴",
+      "ja": "アディスアベバ",
+      "en": "Addis Ababa"
+    },
+    "AGA": {
+      "zh": "阿加迪爾",
+      "ja": "アガディール",
+      "en": "Agadir"
+    },
+    "AGP": {
+      "zh": "馬拉加",
+      "ja": "マラガ",
+      "en": "Malaga"
+    },
+    "AHO": {
+      "zh": "阿爾蓋羅",
+      "ja": "アルゲーロ",
+      "en": "Alghero"
+    },
     "AKJ": {
       "zh": "旭川機場",
       "ja": "旭川空港",
@@ -17,6 +63,31 @@
       "zh": "奧克蘭",
       "ja": "オークランド",
       "en": "Auckland"
+    },
+    "ALA": {
+      "zh": "阿拉木圖",
+      "ja": "アルマトイ",
+      "en": "Almaty"
+    },
+    "ALC": {
+      "zh": "阿利坎特",
+      "ja": "アリカンテ",
+      "en": "Alicante"
+    },
+    "ALG": {
+      "zh": "阿爾及爾",
+      "ja": "アルジェ",
+      "en": "Algiers"
+    },
+    "AMD": {
+      "zh": "艾哈邁達巴德",
+      "ja": "アーメダバード",
+      "en": "Ahmedabad"
+    },
+    "AMM": {
+      "zh": "安曼",
+      "ja": "アンマン",
+      "en": "Amman"
     },
     "AMS": {
       "zh": "阿姆斯特丹",
@@ -28,10 +99,105 @@
       "ja": "青森空港",
       "en": "Aomori Airport"
     },
+    "AQJ": {
+      "zh": "亞喀巴",
+      "ja": "アカバ",
+      "en": "Aqaba"
+    },
+    "ARN": {
+      "zh": "斯德哥爾摩",
+      "ja": "ストックホルム",
+      "en": "Stockholm"
+    },
+    "ASR": {
+      "zh": "開塞利",
+      "ja": "カイセリ",
+      "en": "Kayseri"
+    },
+    "ATH": {
+      "zh": "雅典",
+      "ja": "アテネ",
+      "en": "Athens"
+    },
+    "ATL": {
+      "zh": "亞特蘭大",
+      "ja": "アトランタ",
+      "en": "Atlanta"
+    },
+    "AUH": {
+      "zh": "阿布達比",
+      "ja": "アブダビ",
+      "en": "Abu Dhabi"
+    },
     "AXT": {
       "zh": "秋田機場",
       "ja": "秋田空港",
       "en": "Akita Airport"
+    },
+    "AYT": {
+      "zh": "安塔利亞",
+      "ja": "アンタルヤ",
+      "en": "Antalya"
+    },
+    "BAH": {
+      "zh": "巴林",
+      "ja": "バーレーン",
+      "en": "Bahrain"
+    },
+    "BCN": {
+      "zh": "巴塞隆納",
+      "ja": "バルセロナ",
+      "en": "Barcelona"
+    },
+    "BEG": {
+      "zh": "貝爾格勒",
+      "ja": "ベオグラード",
+      "en": "Belgrade"
+    },
+    "BER": {
+      "zh": "柏林",
+      "ja": "ベルリン",
+      "en": "Berlin"
+    },
+    "BEY": {
+      "zh": "貝魯特",
+      "ja": "ベイルート",
+      "en": "Beirut"
+    },
+    "BFS": {
+      "zh": "貝爾法斯特國際",
+      "ja": "ベルファスト国際",
+      "en": "Belfast International"
+    },
+    "BGO": {
+      "zh": "卑爾根",
+      "ja": "ベルゲン",
+      "en": "Bergen"
+    },
+    "BGY": {
+      "zh": "貝加莫",
+      "ja": "ベルガモ",
+      "en": "Bergamo"
+    },
+    "BHD": {
+      "zh": "貝爾法斯特市",
+      "ja": "ベルファスト・シティ",
+      "en": "Belfast City"
+    },
+    "BHX": {
+      "zh": "伯明罕",
+      "ja": "バーミンガム",
+      "en": "Birmingham"
+    },
+    "BIO": {
+      "zh": "畢爾包",
+      "ja": "ビルバオ",
+      "en": "Bilbao"
+    },
+    "BJV": {
+      "zh": "博德魯姆",
+      "ja": "ボドルム",
+      "en": "Bodrum"
     },
     "BKI": {
       "zh": "亞庇國際機場",
@@ -43,25 +209,150 @@
       "ja": "バンコク・スワンナプーム",
       "en": "Bangkok Suvarnabhumi"
     },
+    "BLL": {
+      "zh": "比隆",
+      "ja": "ビルン",
+      "en": "Billund"
+    },
+    "BLQ": {
+      "zh": "波隆那",
+      "ja": "ボローニャ",
+      "en": "Bologna"
+    },
+    "BLR": {
+      "zh": "班加羅爾",
+      "ja": "ベンガルール",
+      "en": "Bengaluru"
+    },
+    "BMA": {
+      "zh": "斯德哥爾摩布魯瑪",
+      "ja": "ストックホルム・ブロンマ",
+      "en": "Stockholm Bromma"
+    },
+    "BNE": {
+      "zh": "布里斯本",
+      "ja": "ブリスベン",
+      "en": "Brisbane"
+    },
+    "BOD": {
+      "zh": "波爾多",
+      "ja": "ボルドー",
+      "en": "Bordeaux"
+    },
+    "BOG": {
+      "zh": "波哥大",
+      "ja": "ボゴタ",
+      "en": "Bogota"
+    },
+    "BOJ": {
+      "zh": "布爾加斯",
+      "ja": "ブルガス",
+      "en": "Burgas"
+    },
+    "BOM": {
+      "zh": "孟買",
+      "ja": "ムンバイ",
+      "en": "Mumbai"
+    },
+    "BOS": {
+      "zh": "波士頓",
+      "ja": "ボストン",
+      "en": "Boston"
+    },
+    "BRE": {
+      "zh": "不來梅",
+      "ja": "ブレーメン",
+      "en": "Bremen"
+    },
+    "BRI": {
+      "zh": "巴里",
+      "ja": "バーリ",
+      "en": "Bari"
+    },
+    "BRN": {
+      "zh": "伯恩",
+      "ja": "ベルン",
+      "en": "Bern"
+    },
+    "BRS": {
+      "zh": "布里斯托",
+      "ja": "ブリストル",
+      "en": "Bristol"
+    },
+    "BRU": {
+      "zh": "布魯塞爾",
+      "ja": "ブリュッセル",
+      "en": "Brussels"
+    },
+    "BSL": {
+      "zh": "巴塞爾",
+      "ja": "バーゼル",
+      "en": "Basel"
+    },
+    "BUD": {
+      "zh": "布達佩斯",
+      "ja": "ブダペスト",
+      "en": "Budapest"
+    },
+    "BVA": {
+      "zh": "巴黎博韋",
+      "ja": "パリ・ボーヴェ",
+      "en": "Paris Beauvais"
+    },
     "BWN": {
       "zh": "汶萊國際機場",
       "ja": "ブルネイ国際空港",
       "en": "Brunei International Airport"
+    },
+    "CAG": {
+      "zh": "卡利亞里",
+      "ja": "カリャリ",
+      "en": "Cagliari"
+    },
+    "CAI": {
+      "zh": "開羅",
+      "ja": "カイロ",
+      "en": "Cairo"
     },
     "CAN": {
       "zh": "廣州",
       "ja": "広州",
       "en": "Guangzhou"
     },
+    "CCU": {
+      "zh": "加爾各答",
+      "ja": "コルカタ",
+      "en": "Kolkata"
+    },
     "CDG": {
       "zh": "巴黎戴高樂",
       "ja": "パリ・シャルル・ド・ゴール",
       "en": "Paris CDG"
     },
+    "CFU": {
+      "zh": "科孚島",
+      "ja": "コルフ島",
+      "en": "Corfu"
+    },
     "CGK": {
       "zh": "雅加達蘇加諾哈達機場",
       "ja": "スカルノ・ハッタ国際空港",
       "en": "Jakarta Soekarno Hatta"
+    },
+    "CGN": {
+      "zh": "科隆／波昂",
+      "ja": "ケルン／ボン",
+      "en": "Cologne Bonn"
+    },
+    "CHQ": {
+      "zh": "干尼亞",
+      "ja": "ハニア",
+      "en": "Chania"
+    },
+    "CIA": {
+      "zh": "羅馬錢皮諾",
+      "ja": "ローマ・チャンピーノ",
+      "en": "Rome Ciampino"
     },
     "CJJ": {
       "zh": "清州國際機場",
@@ -78,15 +369,55 @@
       "ja": "重慶江北空港",
       "en": "Chongqing Jiangbei Airport"
     },
+    "CLJ": {
+      "zh": "克盧日－納波卡",
+      "ja": "クルジュ＝ナポカ",
+      "en": "Cluj-Napoca"
+    },
+    "CMB": {
+      "zh": "可倫坡",
+      "ja": "コロンボ",
+      "en": "Colombo"
+    },
     "CMJ": {
       "zh": "七美機場",
       "ja": "七美空港",
       "en": "Qimei Airport"
     },
+    "CMN": {
+      "zh": "卡薩布蘭卡",
+      "ja": "カサブランカ",
+      "en": "Casablanca"
+    },
     "CNX": {
       "zh": "清邁國際機場",
       "ja": "チェンマイ国際空港",
       "en": "Chiang Mai International Airport"
+    },
+    "COK": {
+      "zh": "科欽",
+      "ja": "コーチ",
+      "en": "Kochi"
+    },
+    "CPH": {
+      "zh": "哥本哈根",
+      "ja": "コペンハーゲン",
+      "en": "Copenhagen"
+    },
+    "CPT": {
+      "zh": "開普敦",
+      "ja": "ケープタウン",
+      "en": "Cape Town"
+    },
+    "CRL": {
+      "zh": "沙勒羅瓦",
+      "ja": "シャルルロワ",
+      "en": "Charleroi"
+    },
+    "CTA": {
+      "zh": "卡塔尼亞",
+      "ja": "カターニア",
+      "en": "Catania"
     },
     "CTS": {
       "zh": "札幌新千歲",
@@ -98,35 +429,170 @@
       "ja": "成都双流",
       "en": "Chengdu Shuangliu"
     },
+    "CUN": {
+      "zh": "坎昆",
+      "ja": "カンクン",
+      "en": "Cancun"
+    },
     "CYI": {
       "zh": "嘉義機場",
       "ja": "嘉義空港",
       "en": "Chiayi Airport"
+    },
+    "DAC": {
+      "zh": "達卡",
+      "ja": "ダッカ",
+      "en": "Dhaka"
     },
     "DAD": {
       "zh": "峴港",
       "ja": "ダナン",
       "en": "Da Nang"
     },
+    "DBV": {
+      "zh": "杜布羅夫尼克",
+      "ja": "ドゥブロヴニク",
+      "en": "Dubrovnik"
+    },
+    "DEL": {
+      "zh": "德里",
+      "ja": "デリー",
+      "en": "Delhi"
+    },
+    "DEN": {
+      "zh": "丹佛",
+      "ja": "デンバー",
+      "en": "Denver"
+    },
+    "DFW": {
+      "zh": "達拉斯",
+      "ja": "ダラス",
+      "en": "Dallas"
+    },
+    "DJE": {
+      "zh": "傑爾巴島",
+      "ja": "ジェルバ",
+      "en": "Djerba"
+    },
+    "DLM": {
+      "zh": "達拉曼",
+      "ja": "ダラマン",
+      "en": "Dalaman"
+    },
     "DMK": {
       "zh": "曼谷廊曼",
       "ja": "バンコク・ドンムアン",
       "en": "Bangkok Don Mueang"
+    },
+    "DMM": {
+      "zh": "達曼",
+      "ja": "ダンマーム",
+      "en": "Dammam"
+    },
+    "DOH": {
+      "zh": "多哈",
+      "ja": "ドーハ",
+      "en": "Doha"
     },
     "DPS": {
       "zh": "峇里島登巴薩",
       "ja": "バリ・デンパサール",
       "en": "Bali Denpasar"
     },
+    "DRS": {
+      "zh": "德勒斯登",
+      "ja": "ドレスデン",
+      "en": "Dresden"
+    },
+    "DSS": {
+      "zh": "達卡",
+      "ja": "ダカール",
+      "en": "Dakar"
+    },
+    "DUB": {
+      "zh": "都柏林",
+      "ja": "ダブリン",
+      "en": "Dublin"
+    },
+    "DUS": {
+      "zh": "杜塞道夫",
+      "ja": "デュッセルドルフ",
+      "en": "Dusseldorf"
+    },
+    "DWC": {
+      "zh": "杜拜阿勒馬克圖姆",
+      "ja": "ドバイ・アル・マクトゥーム",
+      "en": "Dubai Al Maktoum"
+    },
     "DXB": {
       "zh": "杜拜",
       "ja": "ドバイ",
       "en": "Dubai"
     },
+    "DYU": {
+      "zh": "杜尚別",
+      "ja": "ドゥシャンベ",
+      "en": "Dushanbe"
+    },
+    "EDI": {
+      "zh": "愛丁堡",
+      "ja": "エディンバラ",
+      "en": "Edinburgh"
+    },
+    "EIN": {
+      "zh": "恩荷芬",
+      "ja": "アイントホーフェン",
+      "en": "Eindhoven"
+    },
+    "ESB": {
+      "zh": "安卡拉",
+      "ja": "アンカラ",
+      "en": "Ankara"
+    },
+    "EVN": {
+      "zh": "葉里溫",
+      "ja": "エレバン",
+      "en": "Yerevan"
+    },
+    "EWR": {
+      "zh": "紐華克",
+      "ja": "ニューアーク",
+      "en": "Newark"
+    },
+    "EZE": {
+      "zh": "布宜諾斯艾利斯",
+      "ja": "ブエノスアイレス",
+      "en": "Buenos Aires"
+    },
+    "FAO": {
+      "zh": "法魯",
+      "ja": "ファロ",
+      "en": "Faro"
+    },
+    "FCO": {
+      "zh": "羅馬",
+      "ja": "ローマ",
+      "en": "Rome"
+    },
     "FKS": {
       "zh": "福島機場",
       "ja": "福島空港",
       "en": "Fukushima Airport"
+    },
+    "FLR": {
+      "zh": "佛羅倫斯",
+      "ja": "フィレンツェ",
+      "en": "Florence"
+    },
+    "FMO": {
+      "zh": "明斯特／奧斯納布呂克",
+      "ja": "ミュンスター／オスナブリュック",
+      "en": "Munster Osnabruck"
+    },
+    "FNC": {
+      "zh": "豐沙爾",
+      "ja": "フンシャル",
+      "en": "Funchal"
     },
     "FOC": {
       "zh": "福州長樂機場",
@@ -138,15 +604,40 @@
       "ja": "フランクフルト",
       "en": "Frankfurt"
     },
+    "FRU": {
+      "zh": "比什凱克",
+      "ja": "ビシュケク",
+      "en": "Bishkek"
+    },
     "FSZ": {
       "zh": "靜岡機場",
       "ja": "静岡空港",
       "en": "Shizuoka Airport"
     },
+    "FUE": {
+      "zh": "富埃特文圖拉島",
+      "ja": "フエルテベントゥラ",
+      "en": "Fuerteventura"
+    },
     "FUK": {
       "zh": "福岡",
       "ja": "福岡",
       "en": "Fukuoka"
+    },
+    "GDN": {
+      "zh": "格但斯克",
+      "ja": "グダニスク",
+      "en": "Gdansk"
+    },
+    "GIG": {
+      "zh": "里約熱內盧",
+      "ja": "リオデジャネイロ",
+      "en": "Rio de Janeiro"
+    },
+    "GLA": {
+      "zh": "格拉斯哥",
+      "ja": "グラスゴー",
+      "en": "Glasgow"
     },
     "GMP": {
       "zh": "首爾金浦",
@@ -158,10 +649,75 @@
       "ja": "緑島空港",
       "en": "Green Island Airport"
     },
+    "GOA": {
+      "zh": "熱那亞",
+      "ja": "ジェノヴァ",
+      "en": "Genoa"
+    },
+    "GOI": {
+      "zh": "果阿達波林",
+      "ja": "ゴア・ダボリム",
+      "en": "Goa Dabolim"
+    },
+    "GOT": {
+      "zh": "哥特堡",
+      "ja": "ヨーテボリ",
+      "en": "Gothenburg"
+    },
+    "GOX": {
+      "zh": "果阿莫帕",
+      "ja": "ゴア・モパ",
+      "en": "Goa Mopa"
+    },
+    "GRU": {
+      "zh": "聖保羅",
+      "ja": "サンパウロ",
+      "en": "Sao Paulo"
+    },
+    "GRZ": {
+      "zh": "格拉茨",
+      "ja": "グラーツ",
+      "en": "Graz"
+    },
+    "GVA": {
+      "zh": "日內瓦",
+      "ja": "ジュネーヴ",
+      "en": "Geneva"
+    },
+    "GYD": {
+      "zh": "巴庫",
+      "ja": "バクー",
+      "en": "Baku"
+    },
+    "GZT": {
+      "zh": "加濟安泰普",
+      "ja": "ガズィアンテプ",
+      "en": "Gaziantep"
+    },
+    "HAJ": {
+      "zh": "漢諾威",
+      "ja": "ハノーファー",
+      "en": "Hanover"
+    },
+    "HAM": {
+      "zh": "漢堡",
+      "ja": "ハンブルク",
+      "en": "Hamburg"
+    },
     "HAN": {
       "zh": "河內",
       "ja": "ハノイ",
       "en": "Hanoi"
+    },
+    "HEL": {
+      "zh": "赫爾辛基",
+      "ja": "ヘルシンキ",
+      "en": "Helsinki"
+    },
+    "HER": {
+      "zh": "伊拉克利翁",
+      "ja": "イラクリオン",
+      "en": "Heraklion"
     },
     "HGH": {
       "zh": "杭州",
@@ -193,25 +749,70 @@
       "ja": "東京・羽田",
       "en": "Tokyo Haneda"
     },
+    "HRG": {
+      "zh": "洪加達",
+      "ja": "フルガダ",
+      "en": "Hurghada"
+    },
     "HUN": {
       "zh": "花蓮機場",
       "ja": "花蓮空港",
       "en": "Hualien Airport"
+    },
+    "HYD": {
+      "zh": "海得拉巴",
+      "ja": "ハイデラバード",
+      "en": "Hyderabad"
+    },
+    "IAD": {
+      "zh": "華盛頓杜勒斯",
+      "ja": "ワシントン・ダレス",
+      "en": "Washington Dulles"
+    },
+    "IAH": {
+      "zh": "休士頓",
+      "ja": "ヒューストン",
+      "en": "Houston"
     },
     "IBR": {
       "zh": "茨城機場",
       "ja": "茨城空港",
       "en": "Ibaraki Airport"
     },
+    "IBZ": {
+      "zh": "伊維薩島",
+      "ja": "イビサ",
+      "en": "Ibiza"
+    },
     "ICN": {
       "zh": "首爾仁川",
       "ja": "ソウル・仁川",
       "en": "Seoul Incheon"
     },
+    "IKA": {
+      "zh": "德黑蘭伊瑪目霍梅尼",
+      "ja": "テヘラン・エマーム・ホメイニー",
+      "en": "Tehran Imam Khomeini"
+    },
+    "ISB": {
+      "zh": "伊斯蘭馬巴德",
+      "ja": "イスラマバード",
+      "en": "Islamabad"
+    },
+    "IST": {
+      "zh": "伊斯坦堡",
+      "ja": "イスタンブール",
+      "en": "Istanbul"
+    },
     "ITM": {
       "zh": "大阪伊丹",
       "ja": "大阪・伊丹",
       "en": "Osaka Itami"
+    },
+    "JED": {
+      "zh": "吉達",
+      "ja": "ジッダ",
+      "en": "Jeddah"
     },
     "JFK": {
       "zh": "紐約甘迺迪",
@@ -222,6 +823,21 @@
       "zh": "新山士乃國際機場",
       "ja": "スナイ国際空港",
       "en": "Senai International Airport"
+    },
+    "JMK": {
+      "zh": "米科諾斯島",
+      "ja": "ミコノス島",
+      "en": "Mykonos"
+    },
+    "JNB": {
+      "zh": "約翰尼斯堡",
+      "ja": "ヨハネスブルグ",
+      "en": "Johannesburg"
+    },
+    "JTR": {
+      "zh": "聖托里尼",
+      "ja": "サントリーニ",
+      "en": "Santorini"
     },
     "KBV": {
       "zh": "喀比國際機場",
@@ -238,10 +854,30 @@
       "ja": "高知龍馬空港",
       "en": "Kochi Ryoma Airport"
     },
+    "KEF": {
+      "zh": "凱夫拉維克",
+      "ja": "ケプラヴィーク",
+      "en": "Keflavik"
+    },
+    "KFE": {
+      "zh": "凱法利尼亞",
+      "ja": "ケファロニア",
+      "en": "Kefalonia"
+    },
+    "KGS": {
+      "zh": "科斯島",
+      "ja": "コス島",
+      "en": "Kos"
+    },
     "KHH": {
       "zh": "高雄",
       "ja": "高雄",
       "en": "Kaohsiung"
+    },
+    "KHI": {
+      "zh": "喀拉蚩",
+      "ja": "カラチ",
+      "en": "Karachi"
     },
     "KIJ": {
       "zh": "新潟機場",
@@ -278,40 +914,205 @@
       "ja": "浦項慶州空港",
       "en": "Pohang Gyeongju Airport"
     },
+    "KRK": {
+      "zh": "克拉科夫",
+      "ja": "クラクフ",
+      "en": "Krakow"
+    },
+    "KTM": {
+      "zh": "加德滿都",
+      "ja": "カトマンズ",
+      "en": "Kathmandu"
+    },
+    "KTW": {
+      "zh": "卡托維治",
+      "ja": "カトヴィツェ",
+      "en": "Katowice"
+    },
     "KUL": {
       "zh": "吉隆坡",
       "ja": "クアラルンプール",
       "en": "Kuala Lumpur"
+    },
+    "KUN": {
+      "zh": "考納斯",
+      "ja": "カウナス",
+      "en": "Kaunas"
+    },
+    "KUT": {
+      "zh": "庫塔伊西",
+      "ja": "クタイシ",
+      "en": "Kutaisi"
+    },
+    "KVA": {
+      "zh": "卡瓦拉",
+      "ja": "カヴァラ",
+      "en": "Kavala"
     },
     "KWE": {
       "zh": "貴陽龍洞堡機場",
       "ja": "貴陽龍洞堡空港",
       "en": "Guiyang Longdongbao Airport"
     },
+    "KWI": {
+      "zh": "科威特",
+      "ja": "クウェート",
+      "en": "Kuwait"
+    },
     "KYD": {
       "zh": "蘭嶼機場",
       "ja": "蘭嶼空港",
       "en": "Orchid Island Airport"
+    },
+    "LAS": {
+      "zh": "拉斯維加斯",
+      "ja": "ラスベガス",
+      "en": "Las Vegas"
     },
     "LAX": {
       "zh": "洛杉磯",
       "ja": "ロサンゼルス",
       "en": "Los Angeles"
     },
+    "LCA": {
+      "zh": "拉納卡",
+      "ja": "ラルナカ",
+      "en": "Larnaca"
+    },
+    "LCY": {
+      "zh": "倫敦城市機場",
+      "ja": "ロンドン・シティ",
+      "en": "London City"
+    },
+    "LEJ": {
+      "zh": "萊比錫",
+      "ja": "ライプツィヒ",
+      "en": "Leipzig"
+    },
+    "LGW": {
+      "zh": "倫敦蓋威克",
+      "ja": "ロンドン・ガトウィック",
+      "en": "London Gatwick"
+    },
+    "LHE": {
+      "zh": "拉合爾",
+      "ja": "ラホール",
+      "en": "Lahore"
+    },
     "LHR": {
       "zh": "倫敦希斯洛",
       "ja": "ロンドン・ヒースロー",
       "en": "London Heathrow"
+    },
+    "LIL": {
+      "zh": "里爾",
+      "ja": "リール",
+      "en": "Lille"
+    },
+    "LIM": {
+      "zh": "利馬",
+      "ja": "リマ",
+      "en": "Lima"
+    },
+    "LIN": {
+      "zh": "米蘭利納特",
+      "ja": "ミラノ・リナーテ",
+      "en": "Milan Linate"
+    },
+    "LIS": {
+      "zh": "里斯本",
+      "ja": "リスボン",
+      "en": "Lisbon"
+    },
+    "LJU": {
+      "zh": "盧布爾雅那",
+      "ja": "リュブリャナ",
+      "en": "Ljubljana"
+    },
+    "LOS": {
+      "zh": "拉哥斯",
+      "ja": "ラゴス",
+      "en": "Lagos"
+    },
+    "LPA": {
+      "zh": "大加那利島",
+      "ja": "グラン・カナリア",
+      "en": "Gran Canaria"
+    },
+    "LPL": {
+      "zh": "利物浦",
+      "ja": "リバプール",
+      "en": "Liverpool"
+    },
+    "LTN": {
+      "zh": "倫敦盧頓",
+      "ja": "ロンドン・ルートン",
+      "en": "London Luton"
+    },
+    "LUX": {
+      "zh": "盧森堡",
+      "ja": "ルクセンブルク",
+      "en": "Luxembourg"
+    },
+    "LXR": {
+      "zh": "盧克索",
+      "ja": "ルクソール",
+      "en": "Luxor"
+    },
+    "LYS": {
+      "zh": "里昂",
+      "ja": "リヨン",
+      "en": "Lyon"
     },
     "LZN": {
       "zh": "馬祖南竿機場",
       "ja": "馬祖南竿空港",
       "en": "Matsu Nangan Airport"
     },
+    "MAA": {
+      "zh": "清奈",
+      "ja": "チェンナイ",
+      "en": "Chennai"
+    },
+    "MAD": {
+      "zh": "馬德里",
+      "ja": "マドリード",
+      "en": "Madrid"
+    },
+    "MAH": {
+      "zh": "梅諾卡島",
+      "ja": "メノルカ",
+      "en": "Menorca"
+    },
+    "MAN": {
+      "zh": "曼徹斯特",
+      "ja": "マンチェスター",
+      "en": "Manchester"
+    },
+    "MCO": {
+      "zh": "奧蘭多",
+      "ja": "オーランド",
+      "en": "Orlando"
+    },
+    "MCT": {
+      "zh": "馬斯喀特",
+      "ja": "マスカット",
+      "en": "Muscat"
+    },
+    "MED": {
+      "zh": "麥地那",
+      "ja": "メディナ",
+      "en": "Medina"
+    },
     "MEL": {
       "zh": "墨爾本",
       "ja": "メルボルン",
       "en": "Melbourne"
+    },
+    "MEX": {
+      "zh": "墨西哥城",
+      "ja": "メキシコシティ",
+      "en": "Mexico City"
     },
     "MFK": {
       "zh": "馬祖北竿機場",
@@ -323,10 +1124,45 @@
       "ja": "マカオ",
       "en": "Macau"
     },
+    "MIA": {
+      "zh": "邁阿密",
+      "ja": "マイアミ",
+      "en": "Miami"
+    },
+    "MLA": {
+      "zh": "馬爾他",
+      "ja": "マルタ",
+      "en": "Malta"
+    },
+    "MLE": {
+      "zh": "馬列",
+      "ja": "マレ",
+      "en": "Male"
+    },
+    "MMX": {
+      "zh": "馬爾默",
+      "ja": "マルメ",
+      "en": "Malmo"
+    },
     "MNL": {
       "zh": "馬尼拉",
       "ja": "マニラ",
       "en": "Manila"
+    },
+    "MRS": {
+      "zh": "馬賽",
+      "ja": "マルセイユ",
+      "en": "Marseille"
+    },
+    "MUC": {
+      "zh": "慕尼黑",
+      "ja": "ミュンヘン",
+      "en": "Munich"
+    },
+    "MXP": {
+      "zh": "米蘭馬爾彭薩",
+      "ja": "ミラノ・マルペンサ",
+      "en": "Milan Malpensa"
     },
     "MYJ": {
       "zh": "松山機場（日本）",
@@ -338,6 +1174,26 @@
       "ja": "澎湖空港",
       "en": "Penghu Airport"
     },
+    "NAP": {
+      "zh": "那不勒斯",
+      "ja": "ナポリ",
+      "en": "Naples"
+    },
+    "NBO": {
+      "zh": "奈洛比",
+      "ja": "ナイロビ",
+      "en": "Nairobi"
+    },
+    "NCE": {
+      "zh": "尼斯",
+      "ja": "ニース",
+      "en": "Nice"
+    },
+    "NCL": {
+      "zh": "紐卡索",
+      "ja": "ニューカッスル",
+      "en": "Newcastle"
+    },
     "NGO": {
       "zh": "名古屋中部",
       "ja": "名古屋・中部",
@@ -348,10 +1204,25 @@
       "ja": "南京禄口空港",
       "en": "Nanjing Lukou Airport"
     },
+    "NQZ": {
+      "zh": "阿斯塔納",
+      "ja": "アスタナ",
+      "en": "Astana"
+    },
     "NRT": {
       "zh": "東京成田",
       "ja": "東京・成田",
       "en": "Tokyo Narita"
+    },
+    "NTE": {
+      "zh": "南特",
+      "ja": "ナント",
+      "en": "Nantes"
+    },
+    "NUE": {
+      "zh": "紐倫堡",
+      "ja": "ニュルンベルク",
+      "en": "Nuremberg"
     },
     "OIT": {
       "zh": "大分機場",
@@ -368,6 +1239,46 @@
       "ja": "岡山空港",
       "en": "Okayama Airport"
     },
+    "OLB": {
+      "zh": "奧爾比亞",
+      "ja": "オルビア",
+      "en": "Olbia"
+    },
+    "OPO": {
+      "zh": "波多",
+      "ja": "ポルト",
+      "en": "Porto"
+    },
+    "ORD": {
+      "zh": "芝加哥",
+      "ja": "シカゴ",
+      "en": "Chicago"
+    },
+    "ORK": {
+      "zh": "科克",
+      "ja": "コーク",
+      "en": "Cork"
+    },
+    "ORY": {
+      "zh": "巴黎奧利",
+      "ja": "パリ・オルリー",
+      "en": "Paris Orly"
+    },
+    "OSL": {
+      "zh": "奧斯陸",
+      "ja": "オスロ",
+      "en": "Oslo"
+    },
+    "OTP": {
+      "zh": "布加勒斯特",
+      "ja": "ブカレスト",
+      "en": "Bucharest"
+    },
+    "PDL": {
+      "zh": "蓬塔德爾加達",
+      "ja": "ポンタ・デルガダ",
+      "en": "Ponta Delgada"
+    },
     "PEK": {
       "zh": "北京首都",
       "ja": "北京首都",
@@ -378,40 +1289,140 @@
       "ja": "ペナン国際空港",
       "en": "Penang International Airport"
     },
+    "PER": {
+      "zh": "伯斯",
+      "ja": "パース",
+      "en": "Perth"
+    },
+    "PFO": {
+      "zh": "帕福斯",
+      "ja": "パフォス",
+      "en": "Paphos"
+    },
     "PKX": {
       "zh": "北京大興",
       "ja": "北京大興",
       "en": "Beijing Daxing"
+    },
+    "PMI": {
+      "zh": "帕爾馬馬略卡",
+      "ja": "パルマ・デ・マヨルカ",
+      "en": "Palma de Mallorca"
+    },
+    "PMO": {
+      "zh": "巴勒摩",
+      "ja": "パレルモ",
+      "en": "Palermo"
     },
     "PNH": {
       "zh": "金邊國際機場",
       "ja": "プノンペン国際空港",
       "en": "Phnom Penh International Airport"
     },
+    "POZ": {
+      "zh": "波茲南",
+      "ja": "ポズナン",
+      "en": "Poznan"
+    },
+    "PRG": {
+      "zh": "布拉格",
+      "ja": "プラハ",
+      "en": "Prague"
+    },
+    "PSA": {
+      "zh": "比薩",
+      "ja": "ピサ",
+      "en": "Pisa"
+    },
+    "PTY": {
+      "zh": "巴拿馬城",
+      "ja": "パナマシティ",
+      "en": "Panama City"
+    },
     "PUS": {
       "zh": "釜山",
       "ja": "釜山",
       "en": "Busan"
+    },
+    "PUY": {
+      "zh": "普拉",
+      "ja": "プーラ",
+      "en": "Pula"
     },
     "PVG": {
       "zh": "上海浦東",
       "ja": "上海浦東",
       "en": "Shanghai Pudong"
     },
+    "RAK": {
+      "zh": "馬拉喀什",
+      "ja": "マラケシュ",
+      "en": "Marrakesh"
+    },
     "RGN": {
       "zh": "仰光國際機場",
       "ja": "ヤンゴン国際空港",
       "en": "Yangon International Airport"
+    },
+    "RHO": {
+      "zh": "羅德島",
+      "ja": "ロードス",
+      "en": "Rhodes"
+    },
+    "RIX": {
+      "zh": "里加",
+      "ja": "リガ",
+      "en": "Riga"
+    },
+    "RJK": {
+      "zh": "里耶卡",
+      "ja": "リエカ",
+      "en": "Rijeka"
+    },
+    "RKV": {
+      "zh": "雷克雅維克",
+      "ja": "レイキャビク",
+      "en": "Reykjavik"
     },
     "RMQ": {
       "zh": "臺中國際機場",
       "ja": "台中国際空港",
       "en": "Taichung International Airport"
     },
+    "RTM": {
+      "zh": "鹿特丹",
+      "ja": "ロッテルダム",
+      "en": "Rotterdam"
+    },
+    "RUH": {
+      "zh": "利雅德",
+      "ja": "リヤド",
+      "en": "Riyadh"
+    },
+    "RZE": {
+      "zh": "熱舒夫",
+      "ja": "ジェシュフ",
+      "en": "Rzeszow"
+    },
+    "SAH": {
+      "zh": "沙那",
+      "ja": "サナア",
+      "en": "Sanaa"
+    },
     "SAI": {
       "zh": "暹粒吳哥國際機場",
       "ja": "シェムリアップ・アンコール国際空港",
       "en": "Siem Reap Angkor International Airport"
+    },
+    "SAW": {
+      "zh": "伊斯坦堡薩比哈",
+      "ja": "イスタンブール・サビハ",
+      "en": "Istanbul Sabiha"
+    },
+    "SCL": {
+      "zh": "聖地牙哥",
+      "ja": "サンティアゴ",
+      "en": "Santiago"
     },
     "SDJ": {
       "zh": "仙台機場",
@@ -438,20 +1449,105 @@
       "ja": "上海虹橋",
       "en": "Shanghai Hongqiao"
     },
+    "SHJ": {
+      "zh": "沙迦",
+      "ja": "シャルジャ",
+      "en": "Sharjah"
+    },
     "SIN": {
       "zh": "新加坡樟宜",
       "ja": "シンガポール・チャンギ",
       "en": "Singapore Changi"
+    },
+    "SJJ": {
+      "zh": "塞拉耶佛",
+      "ja": "サラエボ",
+      "en": "Sarajevo"
+    },
+    "SJU": {
+      "zh": "聖胡安",
+      "ja": "サンフアン",
+      "en": "San Juan"
+    },
+    "SKD": {
+      "zh": "撒馬爾罕",
+      "ja": "サマルカンド",
+      "en": "Samarkand"
+    },
+    "SKG": {
+      "zh": "塞薩洛尼基",
+      "ja": "テッサロニキ",
+      "en": "Thessaloniki"
+    },
+    "SKP": {
+      "zh": "斯科普里",
+      "ja": "スコピエ",
+      "en": "Skopje"
+    },
+    "SNN": {
+      "zh": "香農",
+      "ja": "シャノン",
+      "en": "Shannon"
+    },
+    "SOF": {
+      "zh": "索菲亞",
+      "ja": "ソフィア",
+      "en": "Sofia"
+    },
+    "SPU": {
+      "zh": "斯普利特",
+      "ja": "スプリト",
+      "en": "Split"
+    },
+    "SSH": {
+      "zh": "沙姆沙伊赫",
+      "ja": "シャルム・エル・シェイク",
+      "en": "Sharm El Sheikh"
+    },
+    "STN": {
+      "zh": "倫敦史坦斯特",
+      "ja": "ロンドン・スタンステッド",
+      "en": "London Stansted"
+    },
+    "STR": {
+      "zh": "斯圖加特",
+      "ja": "シュトゥットガルト",
+      "en": "Stuttgart"
     },
     "SUB": {
       "zh": "泗水朱安達國際機場",
       "ja": "ジュアンダ国際空港",
       "en": "Surabaya Juanda"
     },
+    "SUF": {
+      "zh": "拉梅齊亞泰爾梅",
+      "ja": "ラメーツィア・テルメ",
+      "en": "Lamezia Terme"
+    },
+    "SVG": {
+      "zh": "斯塔萬格",
+      "ja": "スタヴァンゲル",
+      "en": "Stavanger"
+    },
+    "SVQ": {
+      "zh": "塞維亞",
+      "ja": "セビリア",
+      "en": "Seville"
+    },
+    "SXB": {
+      "zh": "史特拉斯堡",
+      "ja": "ストラスブール",
+      "en": "Strasbourg"
+    },
     "SYD": {
       "zh": "雪梨",
       "ja": "シドニー",
       "en": "Sydney"
+    },
+    "SZG": {
+      "zh": "薩爾斯堡",
+      "ja": "ザルツブルク",
+      "en": "Salzburg"
     },
     "SZX": {
       "zh": "深圳",
@@ -473,15 +1569,80 @@
       "ja": "青島膠東空港",
       "en": "Qingdao Jiaodong Airport"
     },
+    "TAS": {
+      "zh": "塔什干",
+      "ja": "タシュケント",
+      "en": "Tashkent"
+    },
+    "TBS": {
+      "zh": "提比里斯",
+      "ja": "トビリシ",
+      "en": "Tbilisi"
+    },
+    "TFN": {
+      "zh": "特內里費北部",
+      "ja": "テネリフェ北部",
+      "en": "Tenerife North"
+    },
+    "TFS": {
+      "zh": "特內里費南部",
+      "ja": "テネリフェ南部",
+      "en": "Tenerife South"
+    },
     "TFU": {
       "zh": "成都天府",
       "ja": "成都天府",
       "en": "Chengdu Tianfu"
     },
+    "TGD": {
+      "zh": "波德戈里察",
+      "ja": "ポドゴリツァ",
+      "en": "Podgorica"
+    },
+    "TIA": {
+      "zh": "地拉那",
+      "ja": "ティラナ",
+      "en": "Tirana"
+    },
+    "TIV": {
+      "zh": "蒂瓦特",
+      "ja": "ティヴァト",
+      "en": "Tivat"
+    },
+    "TKU": {
+      "zh": "土庫",
+      "ja": "トゥルク",
+      "en": "Turku"
+    },
+    "TLL": {
+      "zh": "塔林",
+      "ja": "タリン",
+      "en": "Tallinn"
+    },
+    "TLS": {
+      "zh": "土魯斯",
+      "ja": "トゥールーズ",
+      "en": "Toulouse"
+    },
+    "TLV": {
+      "zh": "特拉維夫",
+      "ja": "テルアビブ",
+      "en": "Tel Aviv"
+    },
+    "TMP": {
+      "zh": "坦佩雷",
+      "ja": "タンペレ",
+      "en": "Tampere"
+    },
     "TNN": {
       "zh": "臺南機場",
       "ja": "台南空港",
       "en": "Tainan Airport"
+    },
+    "TOS": {
+      "zh": "特羅姆瑟",
+      "ja": "トロムソ",
+      "en": "Tromso"
     },
     "TOY": {
       "zh": "富山機場",
@@ -493,6 +1654,21 @@
       "ja": "台湾桃園国際空港",
       "en": "Taiwan Taoyuan International Airport"
     },
+    "TRD": {
+      "zh": "特隆赫姆",
+      "ja": "トロンハイム",
+      "en": "Trondheim"
+    },
+    "TRN": {
+      "zh": "杜林",
+      "ja": "トリノ",
+      "en": "Turin"
+    },
+    "TRS": {
+      "zh": "的里雅斯特",
+      "ja": "トリエステ",
+      "en": "Trieste"
+    },
     "TSA": {
       "zh": "臺北松山",
       "ja": "台北松山",
@@ -502,6 +1678,11 @@
       "zh": "臺東機場",
       "ja": "台東空港",
       "en": "Taitung Airport"
+    },
+    "TUN": {
+      "zh": "突尼斯",
+      "ja": "チュニス",
+      "en": "Tunis"
     },
     "UKB": {
       "zh": "神戶機場",
@@ -513,15 +1694,55 @@
       "ja": "蔚山空港",
       "en": "Ulsan Airport"
     },
+    "VAR": {
+      "zh": "瓦爾納",
+      "ja": "ヴァルナ",
+      "en": "Varna"
+    },
+    "VCE": {
+      "zh": "威尼斯",
+      "ja": "ヴェネツィア",
+      "en": "Venice"
+    },
+    "VIE": {
+      "zh": "維也納",
+      "ja": "ウィーン",
+      "en": "Vienna"
+    },
+    "VLC": {
+      "zh": "瓦倫西亞",
+      "ja": "バレンシア",
+      "en": "Valencia"
+    },
+    "VNO": {
+      "zh": "維爾紐斯",
+      "ja": "ヴィリニュス",
+      "en": "Vilnius"
+    },
+    "VRN": {
+      "zh": "維洛納",
+      "ja": "ヴェローナ",
+      "en": "Verona"
+    },
     "VTE": {
       "zh": "永珍瓦岱國際機場",
       "ja": "ワットタイ国際空港",
       "en": "Vientiane Wattay International Airport"
     },
+    "WAW": {
+      "zh": "華沙",
+      "ja": "ワルシャワ",
+      "en": "Warsaw"
+    },
     "WOT": {
       "zh": "望安機場",
       "ja": "望安空港",
       "en": "Wang-an Airport"
+    },
+    "WRO": {
+      "zh": "弗羅茨瓦夫",
+      "ja": "ヴロツワフ",
+      "en": "Wroclaw"
     },
     "WUH": {
       "zh": "武漢天河機場",
@@ -538,6 +1759,11 @@
       "ja": "襄陽国際空港",
       "en": "Yangyang International Airport"
     },
+    "YUL": {
+      "zh": "蒙特婁",
+      "ja": "モントリオール",
+      "en": "Montreal"
+    },
     "YVR": {
       "zh": "溫哥華",
       "ja": "バンクーバー",
@@ -547,6 +1773,21 @@
       "zh": "多倫多",
       "ja": "トロント",
       "en": "Toronto"
+    },
+    "ZAD": {
+      "zh": "札達爾",
+      "ja": "ザダル",
+      "en": "Zadar"
+    },
+    "ZAG": {
+      "zh": "札格瑞布",
+      "ja": "ザグレブ",
+      "en": "Zagreb"
+    },
+    "ZRH": {
+      "zh": "蘇黎世",
+      "ja": "チューリッヒ",
+      "en": "Zurich"
     }
   }
 }
