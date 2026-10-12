@@ -12,6 +12,10 @@ main{max-width:530px;margin:0 auto}
 h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
 .subtitle{font-size:13px;color:var(--muted);margin:3px 0 18px}
 .note{background:#2e2819;border:1px solid #725f2d;border-radius:9px;padding:10px 12px;color:#f5d78b;font-size:12px;margin:12px 0}
+.private-access{display:flex;flex-direction:column;gap:7px;margin:12px 0 15px;padding:13px;border:1px solid #66795e;border-radius:10px;background:#172419}
+.private-access strong{font-size:14px;color:#d1eabf}.private-access span,.private-access small{font-size:11px;color:#c1d2bc}
+.private-link{display:block;text-decoration:none;text-align:center;background:#365a32;border:1px solid #5f9451;padding:10px 8px;color:#f8ffed;font-weight:700;border-radius:6px}
+.private-link:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .hidden{display:none!important}
 .clockbar{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;background:#1d222b;margin-bottom:14px;flex-wrap:wrap}
 .clockbar strong{font-size:17px;color:#fff;font-variant-numeric:tabular-nums}
@@ -62,6 +66,12 @@ h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
  <h1>✈ WORLD DEPARTURES</h1>
  <p class="subtitle">世界機場每日探索｜黑底黃字翻牌看板</p>
  <div class="note">🧪 <b>台灣六座機場真實資料試用版</b>：點選任一機場後，才向 TDX 查詢未來 12 小時出發航班。每天最多選兩座，沒有假航班。正式首頁不變。</div>
+ <section class="private-access" aria-label="全球機場私人試用入口">
+   <strong>🌍 全球機場｜AeroDataBox 私人版</strong>
+   <span>獨立的通行碼保護頁面；不使用 TDX，開啟入口不會自動查詢。</span>
+   <a class="private-link" href="https://script.google.com/macros/s/AKfycbzsvaUzYCtttFUwGcC98ffNAVgQFl0oNBdCKn1g2DOVlGcFSbPgBG-E7TLplzzrePZiuw/exec" target="_blank" rel="noopener noreferrer">開啟私人世界機場看板 ↗</a>
+   <small>目前先在 Google Apps Script 頁面選機場並輸入通行碼；GitHub 的翻牌畫面仍為下方 TDX 試用版。</small>
+ </section>
  <div class="clockbar"><div><small>台灣現在時間</small><div><strong id="taiwanClock">--:--</strong></div></div><div><small>機場當地時間 · UTC+8</small><div><strong id="airportClock">--:--</strong></div></div></div>
  <section id="chooseScreen">
    <div class="sectionTitle">今天想看看哪個機場？（最多選兩座）</div>
