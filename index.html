@@ -491,7 +491,7 @@ function missingDestinationNamesText(){
  const all=distinctDestinationRecords(snapshot.flights),missing=missingDestinationRecords(snapshot.flights);
  const entries=missing.map(f=>{
   const code=String(f.destCode||"").toUpperCase();
-  const name=String(f.en||f.zh||code||"未知").replace(/[\\r\n\\t|]+/g," ").slice(0,100);
+  const name=String(f.en||f.zh||code||"未知").replace(/[\r\n\t|]+/g," ").slice(0,100);
   return (code||"無 IATA")+" | "+name;
  }).sort();
  return "世界機場目的地三語待補｜"+snapshot.code+"｜"+all.length+" 個目的地｜缺 "+missing.length+" 個\n"+
