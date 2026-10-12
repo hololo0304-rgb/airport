@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>世界機場翻牌看板｜全球真實出發航班</title>
+<meta name="theme-color" content="#0b0d11">
+<link rel="manifest" href="./manifest.webmanifest">
+<script>if(new URLSearchParams(location.search).get("mini")==="1")document.documentElement.classList.add("mini-mode");</script>
 <style>
 :root{--bg:#0b0d11;--panel:#171a20;--line:#3b414a;--gold:#f0c040;--muted:#9fa9b8;--fg:#f0f3f7}
 *{box-sizing:border-box}
@@ -58,13 +61,56 @@ h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
 #fetchStatus{color:#dbdbd5;white-space:normal}
 #sourceNote{font-size:10px;color:#adb6c6}
 @media(max-width:370px){body{padding:5px}.board{padding:7px}.headerRow,.flightRow{grid-template-columns:81px 76px minmax(0,1fr);gap:3px}.flap{min-width:14px}.flightCode{font-size:11px}.dest{font-size:11px}}
+.miniTopBar{display:none}
+.desktopLauncher{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 12px}
+.desktopLauncher a{background:#243b30;border:1px solid #4c785b;color:#d5f4d9;text-decoration:none;border-radius:7px;padding:7px 10px;font-size:12px;font-weight:700}
+.desktopLauncher span{font-size:11px;color:var(--muted)}
+/* Mini desktop window shares the exact same cached-flight data and backend quota. */
+.mini-mode body{padding:5px;font-size:12px}
+.mini-mode main{max-width:390px}
+.mini-mode .miniTopBar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:3px 3px 8px}
+.mini-mode .miniTopBar strong{font-size:13px;letter-spacing:.4px;color:var(--gold)}
+.mini-mode .miniTopBar a{font-size:10px;color:#d1dae6;text-decoration:none}
+.mini-mode h1,.mini-mode .subtitle,.mini-mode .desktopLauncher,.mini-mode .note,.mini-mode .clockbar{display:none}
+.mini-mode .sectionTitle{font-size:12px;margin:4px 1px 8px}
+.mini-mode .choices{gap:5px}
+.mini-mode .airportChoice{min-height:76px;padding:7px}
+.mini-mode .airportChoice .slot{font-size:9px}
+.mini-mode .airportChoice .place strong{font-size:18px}
+.mini-mode .airportChoice .place em{font-size:10px}
+.mini-mode .airportChoice .name{font-size:11px}
+.mini-mode .airportChoice .local{font-size:9px;line-height:1.3}
+.mini-mode .bottomHint,.mini-mode #yesterday{font-size:10px;line-height:1.4}
+.mini-mode .board{padding:8px;border-radius:7px}
+.mini-mode .head{padding:0 0 8px;gap:6px}
+.mini-mode .head h2{font-size:15px}
+.mini-mode .head small{font-size:9px}
+.mini-mode .button{font-size:10px;padding:5px 6px}
+.mini-mode .timeSpan{font-size:9px;padding:6px 0;line-height:1.35}
+.mini-mode .headerRow,.mini-mode .flightRow{grid-template-columns:65px 74px minmax(0,1fr);gap:3px}
+.mini-mode .headerRow{font-size:9px;padding:7px 0 5px}
+.mini-mode .flightRow{min-height:42px;padding:5px 0}
+.mini-mode .flap{min-width:12px;height:26px;font-size:14px}
+.mini-mode .flightCode{padding:5px 2px;font-size:11px}
+.mini-mode .dest{font-size:10px;height:27px}
+.mini-mode .footer{padding:5px 0 0;gap:0;font-size:10px}
+.mini-mode .footer > :not(:first-child){display:none!important}
+.mini-mode #refreshView{display:none!important}
+.mini-mode .empty{font-size:11px;padding:13px 5px}
+@media(max-width:310px){
+ .mini-mode .headerRow,.mini-mode .flightRow{grid-template-columns:60px 69px minmax(0,1fr)}
+ .mini-mode .flap{min-width:11px;font-size:13px}
+ .mini-mode .flightCode{font-size:10px}
+}
 @media(prefers-reduced-motion:reduce){.flap.flip,.dest .ticker.scrolling{animation:none}}
 </style>
 </head>
 <body>
 <main>
+ <div class="miniTopBar"><strong>✈ WORLD DEPARTURES</strong><a href="./">完整畫面 ↗</a></div>
  <h1>✈ WORLD DEPARTURES</h1>
  <p class="subtitle">世界機場每日探索｜黑底黃字翻牌看板</p>
+ <div class="desktopLauncher"><a href="./?mini=1" target="_blank" rel="noopener">▣ 開啟桌面迷你看板 ↗</a><span>小視窗模式；自動沿用今天已保存的航班，不會為開啟迷你版重新查詢</span></div>
  <div class="note">🌎 全球出發航班翻牌｜每日六座推薦，保留昨日機場，國內國際航班混合。<b>免輸入通行碼</b>；全球共用每天最多兩座機場的查詢名額。<span id="quotaStatus">正在檢查後端…</span> <button type="button" id="retryStatus" class="button" style="padding:2px 7px;margin-left:5px">重查連線（不耗額度）</button></div>
  <div class="clockbar"><div><small>台灣現在時間</small><div><strong id="taiwanClock">--:--</strong></div></div><div><small>目前機場當地時間</small><div><strong id="airportClock">--:--</strong></div></div></div>
  <section id="chooseScreen">
@@ -82,7 +128,7 @@ h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
    <div class="footer">
      <div class="footerLine"><span id="fetchStatus">尚未查詢</span><button id="refreshView" class="button" type="button">只更新畫面 ↻</button></div>
      <div class="footerLine"><span id="fetchedAt">資料取得時間：--</span><button id="retryBtn" class="button action hidden" type="button">手動重試查詢</button></div>
-     <div>目的地每 3 秒切換：中（繁體中文）→ 日（日本語）→ EN（English）｜缺名標記待補</div>
+     <div>目的地每 3 秒切換：繁體中文 → 日本語 → English｜缺名標記待補</div>
      <div id="namesCoverage">名稱完整率檢查中…</div>
      <div class="footerLine"><button id="copyMissingNames" type="button" class="button">複製所有待補目的地（不查航班）</button><small id="copyNamesStatus" aria-live="polite"></small></div>
      <div id="copyNamesFallback" class="hidden"><label for="missingNamesText">無法自動複製時，請長按下方內容選取並複製：</label><textarea id="missingNamesText" readonly rows="6" style="width:100%;min-height:110px;background:#13161d;color:#e8eef6;border:1px solid #65717d;border-radius:6px;padding:8px;font-size:12px"></textarea></div>
@@ -99,6 +145,7 @@ const MS_HOUR = 3600000;
 const CACHE_PREFIX = "world-airport-real-v1:";
 const DAILY_SELECTIONS = "world-airport-selected-v1:";
 const LAST_CHOICE="world-airport-last-v1";
+const IS_MINI_MODE=new URLSearchParams(location.search).get("mini")==="1";
 let backendReady=false;
 const PROXY_URL="https://script.google.com/macros/s/AKfycbzsvaUzYCtttFUwGcC98ffNAVgQFl0oNBdCKn1g2DOVlGcFSbPgBG-E7TLplzzrePZiuw/exec";
 const POOL_TEXT=`HND|東京羽田|日本|Asia/Tokyo;NRT|東京成田|日本|Asia/Tokyo;KIX|大阪關西|日本|Asia/Tokyo;CTS|札幌新千歲|日本|Asia/Tokyo;FUK|福岡|日本|Asia/Tokyo;ICN|首爾仁川|韓國|Asia/Seoul;HKG|香港國際機場|香港|Asia/Hong_Kong;SIN|新加坡樟宜|新加坡|Asia/Singapore;BKK|曼谷蘇凡納布|泰國|Asia/Bangkok;KUL|吉隆坡|馬來西亞|Asia/Kuala_Lumpur;TPE|桃園國際機場|臺灣|Asia/Taipei;MNL|馬尼拉|菲律賓|Asia/Manila;CGK|雅加達|印尼|Asia/Jakarta;DEL|德里|印度|Asia/Kolkata;DXB|杜拜|阿聯酋|Asia/Dubai;DOH|多哈|卡達|Asia/Qatar;IST|伊斯坦堡|土耳其|Europe/Istanbul;LHR|倫敦希斯洛|英國|Europe/London;LGW|倫敦蓋威克|英國|Europe/London;MAN|曼徹斯特|英國|Europe/London;CDG|巴黎戴高樂|法國|Europe/Paris;AMS|阿姆斯特丹|荷蘭|Europe/Amsterdam;FRA|法蘭克福|德國|Europe/Berlin;MUC|慕尼黑|德國|Europe/Berlin;FCO|羅馬費米齊諾|義大利|Europe/Rome;MAD|馬德里|西班牙|Europe/Madrid;BCN|巴塞隆納|西班牙|Europe/Madrid;HEL|赫爾辛基|芬蘭|Europe/Helsinki;ARN|斯德哥爾摩|瑞典|Europe/Stockholm;OSL|奧斯陸|挪威|Europe/Oslo;CPH|哥本哈根|丹麥|Europe/Copenhagen;JFK|紐約甘迺迪|美國|America/New_York;EWR|紐華克|美國|America/New_York;LAX|洛杉磯|美國|America/Los_Angeles;SFO|舊金山|美國|America/Los_Angeles;SEA|西雅圖|美國|America/Los_Angeles;ORD|芝加哥歐海爾|美國|America/Chicago;ATL|亞特蘭大|美國|America/New_York;DFW|達拉斯沃斯堡|美國|America/Chicago;MIA|邁阿密|美國|America/New_York;YYZ|多倫多|加拿大|America/Toronto;YVR|溫哥華|加拿大|America/Vancouver;MEX|墨西哥城|墨西哥|America/Mexico_City;GRU|聖保羅|巴西|America/Sao_Paulo;SYD|雪梨|澳洲|Australia/Sydney;MEL|墨爾本|澳洲|Australia/Melbourne;BNE|布里斯本|澳洲|Australia/Brisbane;AKL|奧克蘭|紐西蘭|Pacific/Auckland;JNB|約翰尼斯堡|南非|Africa/Johannesburg;CAI|開羅|埃及|Africa/Cairo`;
@@ -442,9 +489,8 @@ function updateTranslation(){
    const name=names[langIndex]||names[2];
    const code=String(dest._flight.destCode||"").toUpperCase();
    const known=!!verifiedNamesFor(dest._flight);
-   const languageTag=["中","日","EN"][langIndex];
    const missing=(langIndex!==2&&!known)?" · 待補":"";
-   text.textContent=languageTag+" · "+(code?code+" ":"")+name+missing;
+   text.textContent=(code?code+" ":"")+name+missing;
    text.title=text.textContent;
    text.classList.remove("scrolling");
    text.style.removeProperty("--travel");
@@ -527,7 +573,28 @@ byId("retryStatus").addEventListener("click",showQuota);
 byId("backBtn").addEventListener("click",goBack);
 byId("refreshView").addEventListener("click",()=>displaySnapshot());
 byId("retryBtn").addEventListener("click",()=>startSnapshot(false));
+function restoreMiniCache(){
+ if(!IS_MINI_MODE)return;
+ const previous=readStorage(LAST_CHOICE),today=selectedToday();
+ const candidates=[previous?.code,...today].filter(Boolean);
+ for(const code of candidates){
+  if(!today.includes(code))continue;
+  const airport=AIRPORTS.find(a=>a.code===code);
+  if(!airport)continue;
+  const cached=readStorage(keyFor(Date.now(),code));
+  if(!cached||cached.code!==code||cached.state!=="ok"||
+     !Number.isFinite(cached.startMs)||!Number.isFinite(cached.endMs)||
+     cached.endMs-cached.startMs!==HOURS*MS_HOUR||!Array.isArray(cached.flights))continue;
+  activeAirport=airport;selected=true;languageIndex=0;snapshot=cached;renderFingerprint="";
+  byId("chooseScreen").classList.add("hidden");
+  byId("boardScreen").classList.remove("hidden");
+  byId("boardAirportName").textContent=airport.name+" "+airport.code;
+  byId("boardAirportSubtitle").textContent=airport.country+" · "+airport.tz;
+  displaySnapshot();auditNames();return;
+ }
+}
 makeChoices();updateClocks();loadAirportNames();showQuota();
+restoreMiniCache();
 setInterval(()=>{
  updateClocks();
  if(selected&&snapshot)displaySnapshot();
