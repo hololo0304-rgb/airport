@@ -449,6 +449,11 @@
       "ja": "ダナン",
       "en": "Da Nang"
     },
+    "DAR": {
+      "zh": "三蘭港",
+      "ja": "ダルエスサラーム",
+      "en": "Dar es Salaam"
+    },
     "DBV": {
       "zh": "杜布羅夫尼克",
       "ja": "ドゥブロヴニク",
@@ -574,6 +579,11 @@
       "ja": "ローマ",
       "en": "Rome"
     },
+    "FIH": {
+      "zh": "金夏沙恩吉利國際機場",
+      "ja": "キンシャサ・ヌジリ国際空港",
+      "en": "Kinshasa N'Djili International Airport"
+    },
     "FKS": {
       "zh": "福島機場",
       "ja": "福島空港",
@@ -623,6 +633,11 @@
       "zh": "福岡",
       "ja": "福岡",
       "en": "Fukuoka"
+    },
+    "GBE": {
+      "zh": "嘉柏隆里",
+      "ja": "ハボローネ",
+      "en": "Gaborone"
     },
     "GDN": {
       "zh": "格但斯克",
@@ -749,6 +764,11 @@
       "ja": "東京・羽田",
       "en": "Tokyo Haneda"
     },
+    "HRE": {
+      "zh": "哈拉雷",
+      "ja": "ハラレ",
+      "en": "Harare"
+    },
     "HRG": {
       "zh": "洪加達",
       "ja": "フルガダ",
@@ -863,6 +883,11 @@
       "zh": "凱法利尼亞",
       "ja": "ケファロニア",
       "en": "Kefalonia"
+    },
+    "KGL": {
+      "zh": "吉佳利",
+      "ja": "キガリ",
+      "en": "Kigali"
     },
     "KGS": {
       "zh": "科斯島",
@@ -1049,10 +1074,20 @@
       "ja": "ロンドン・ルートン",
       "en": "London Luton"
     },
+    "LUN": {
+      "zh": "盧薩卡",
+      "ja": "ルサカ",
+      "en": "Lusaka"
+    },
     "LUX": {
       "zh": "盧森堡",
       "ja": "ルクセンブルク",
       "en": "Luxembourg"
+    },
+    "LVI": {
+      "zh": "利文斯頓",
+      "ja": "リビングストン",
+      "en": "Livingstone"
     },
     "LXR": {
       "zh": "盧克索",
@@ -1149,10 +1184,20 @@
       "ja": "マニラ",
       "en": "Manila"
     },
+    "MPM": {
+      "zh": "馬布多",
+      "ja": "マプト",
+      "en": "Maputo"
+    },
     "MRS": {
       "zh": "馬賽",
       "ja": "マルセイユ",
       "en": "Marseille"
+    },
+    "MSU": {
+      "zh": "馬塞盧",
+      "ja": "マセル",
+      "en": "Maseru"
     },
     "MUC": {
       "zh": "慕尼黑",
@@ -1203,6 +1248,11 @@
       "zh": "南京祿口機場",
       "ja": "南京禄口空港",
       "en": "Nanjing Lukou Airport"
+    },
+    "NLO": {
+      "zh": "金夏沙恩多洛機場",
+      "ja": "キンシャサ・ンドロ空港",
+      "en": "Kinshasa N'Dolo Airport"
     },
     "NQZ": {
       "zh": "阿斯塔納",
@@ -1303,6 +1353,11 @@
       "zh": "北京大興",
       "ja": "北京大興",
       "en": "Beijing Daxing"
+    },
+    "PLZ": {
+      "zh": "伊麗莎白港機場",
+      "ja": "ポートエリザベス国際空港",
+      "en": "Port Elizabeth Airport"
     },
     "PMI": {
       "zh": "帕爾馬馬略卡",
@@ -1734,6 +1789,11 @@
       "ja": "ワルシャワ",
       "en": "Warsaw"
     },
+    "WDH": {
+      "zh": "溫荷克霍齊亞庫塔科國際機場",
+      "ja": "ウィントフック・ホセア・クタコ国際空港",
+      "en": "Windhoek Hosea Kutako International Airport"
+    },
     "WOT": {
       "zh": "望安機場",
       "ja": "望安空港",
@@ -1788,6 +1848,38 @@
       "zh": "蘇黎世",
       "ja": "チューリッヒ",
       "en": "Zurich"
+    }
+  },
+  "nameAliases": {
+    "kinshasa": {
+      "zh": "金夏沙",
+      "ja": "キンシャサ",
+      "en": "Kinshasa"
+    },
+    "port elizabeth": {
+      "zh": "伊麗莎白港",
+      "ja": "ポートエリザベス",
+      "en": "Port Elizabeth"
+    },
+    "gqeberha": {
+      "zh": "格貝哈",
+      "ja": "ゲベーハ",
+      "en": "Gqeberha"
+    },
+    "cape town": {
+      "zh": "開普敦",
+      "ja": "ケープタウン",
+      "en": "Cape Town"
+    },
+    "windhoek": {
+      "zh": "溫荷克",
+      "ja": "ウィントフック",
+      "en": "Windhoek"
+    },
+    "johannesburg": {
+      "zh": "約翰尼斯堡",
+      "ja": "ヨハネスブルグ",
+      "en": "Johannesburg"
     }
   }
 }
