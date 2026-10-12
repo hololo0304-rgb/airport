@@ -65,7 +65,7 @@ h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
 <main>
  <h1>✈ WORLD DEPARTURES</h1>
  <p class="subtitle">世界機場每日探索｜黑底黃字翻牌看板</p>
- <div class="note">🌎 全球出發航班翻牌｜每日六座推薦，保留昨日機場，國內國際航班混合。<b>免輸入通行碼</b>；全球共用每天最多兩座機場的查詢名額。<span id="quotaStatus">正在檢查後端…</span></div>
+ <div class="note">🌎 全球出發航班翻牌｜每日六座推薦，保留昨日機場，國內國際航班混合。<b>免輸入通行碼</b>；全球共用每天最多兩座機場的查詢名額。<span id="quotaStatus">正在檢查後端…</span> <button type="button" id="retryStatus" class="button" style="padding:2px 7px;margin-left:5px">重查連線（不耗額度）</button></div>
  <div class="clockbar"><div><small>台灣現在時間</small><div><strong id="taiwanClock">--:--</strong></div></div><div><small>目前機場當地時間</small><div><strong id="airportClock">--:--</strong></div></div></div>
  <section id="chooseScreen">
    <div class="sectionTitle">今天想看看哪個機場？（最多選兩座）</div>
@@ -316,10 +316,15 @@ async function fetchAero(){
  return {state:"ok",code,startMs,endMs,fetchedMs:Date.parse(r.fetchedAt)||Date.now(),flights,partial:!!r.partial,returned:Number(r.sourceCount)||0};
 }
 async function showQuota(){
- try{const r=await jsonp("status"),used=Array.isArray(r.selected)?r.selected.length:0;
-  backendReady=!!r.publicEnabled;
-  byId("quotaStatus").textContent=r.publicEnabled?"｜全球今日已用 "+used+"／2 座":"｜資料接收器尚未啟用";
- }catch{byId("quotaStatus").textContent="｜無法讀取後端狀態"}
+ const target=byId("quotaStatus");
+ backendReady=false;
+ target.textContent="｜正在檢查連線…";
+ try{
+  const r=await jsonp("status"),used=Array.isArray(r.selected)?r.selected.length:0;
+  backendReady=!!(r&&r.ok&&r.publicEnabled&&!r.ledgerError);
+  target.textContent=backendReady?"｜全球今日已用 "+used+"／2 座":("｜未就緒："+String(r?.status||"NO_STATUS")+(r?.ledgerError?"／配額紀錄異常":"")+(r?.publicEnabled===false?"／公開開關未啟用":""));
+ }catch(err){target.textContent="｜連線錯誤："+String(err?.message||err)}
+ byId("retryStatus").classList.toggle("hidden",backendReady);
 }
 function validateCache(data){
  return data && data.code===activeAirport.code && data.state==="ok" &&
@@ -418,6 +423,7 @@ function displaySnapshot(){
  byId("flightRows").replaceChildren(group);
  updateTranslation();
 }
+byId("retryStatus").addEventListener("click",showQuota);
 byId("backBtn").addEventListener("click",goBack);
 byId("refreshView").addEventListener("click",()=>displaySnapshot());
 byId("retryBtn").addEventListener("click",()=>startSnapshot(false));
