@@ -79,6 +79,7 @@ h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
      <div class="footerLine"><span id="fetchStatus">尚未查詢</span><button id="refreshView" class="button" type="button">只更新畫面 ↻</button></div>
      <div class="footerLine"><span id="fetchedAt">資料取得時間：--</span><button id="retryBtn" class="button action hidden" type="button">手動重試查詢</button></div>
      <div>目的地每 3 秒切換：繁體中文 → 日本語 → English</div>
+     <div id="namesCoverage">名稱完整率檢查中…</div>
      <div id="sourceNote">資料來源：TDX／機場即時出發航班。這是選取當下的 12 小時快照，延誤或取消資訊不會自動更新。</div>
    </div>
   </div>
@@ -92,6 +93,62 @@ const MS_HOUR = 3600000;
 const CACHE_PREFIX = "tw-airport-12h-real-preview-v2:";
 const DAILY_SELECTIONS = "tw-airport-selected-v2:";
 const LAST_CHOICE = "airport-discovery-last-choice-v1";
+
+const TRILINGUAL_URL="./airport_names.json";
+const NAMES_KEY="airport-translation-cache-v1:";
+let trilingual={},namesLookupPending=false,namesAttempted=new Set();
+function goodName(v){return v&&["zh","ja","en"].every(k=>typeof v[k]==="string"&&v[k].trim())}
+function hasChinese(v){return /[\u3400-\u9fff]/.test(String(v||""))}
+function nameByCode(c){return trilingual[c]||null}
+async function loadAirportNames(){
+ try{
+  const r=await fetch(TRILINGUAL_URL,{cache:"force-cache"});if(!r.ok)throw Error("name file HTTP "+r.status);
+  const d=await r.json();
+  for(const [c,v] of Object.entries(d.airports||{}))if(/^[A-Z]{3}$/.test(c)&&goodName(v))trilingual[c]=v;
+  try{
+   const saved=JSON.parse(localStorage.getItem(NAMES_KEY)||"{}");
+   for(const [c,v] of Object.entries(saved))if(!trilingual[c]&&goodName(v))trilingual[c]=v;
+  }catch{}
+ }catch(e){console.warn("Name dictionary unavailable; retaining built-in mapping",e)}
+ if(snapshot){renderFingerprint="";displaySnapshot();auditNames()}
+}
+function auditNames(){
+ if(!snapshot||!Array.isArray(snapshot.flights))return;
+ const codes=[...new Set(snapshot.flights.map(f=>String(f.destCode||"").toUpperCase()).filter(c=>/^[A-Z]{3}$/.test(c)))];
+ const missing=codes.filter(c=>!trilingual[c]&&!DEST[c]);
+ const known=codes.filter(c=>hasChinese(trilingual[c]?.zh||DEST[c]?.[0]||snapshot.flights.find(f=>f.destCode===c)?.zh)).length;
+ const box=byId("namesCoverage");if(box)box.textContent="中文名稱覆蓋："+known+"/"+codes.length+"；未完成三語："+(missing.join("、")||"無");
+ const notTried=missing.filter(c=>!namesAttempted.has(c));
+ if(notTried.length&&!namesLookupPending)batchAirportNames(notTried.slice(0,30));
+}
+async function batchAirportNames(codes){
+ namesLookupPending=true;codes.forEach(c=>namesAttempted.add(c));
+ try{
+  const query='SELECT ?iata ?zh ?ja ?en WHERE { VALUES ?iata {'+codes.map(c=>'"'+c+'"').join(" ")+'} ?airport wdt:P238 ?iata. OPTIONAL { ?airport rdfs:label ?zh FILTER(lang(?zh)="zh") } OPTIONAL { ?airport rdfs:label ?ja FILTER(lang(?ja)="ja") } OPTIONAL { ?airport rdfs:label ?en FILTER(lang(?en)="en") } }';
+  const control=new AbortController(),timer=setTimeout(()=>control.abort(),10000);
+  let r;try{r=await fetch("https://query.wikidata.org/sparql?format=json&query="+encodeURIComponent(query),{signal:control.signal,headers:{Accept:"application/sparql-results+json"}})}finally{clearTimeout(timer)}
+  if(!r.ok)throw Error("Wikidata "+r.status);
+  const data=await r.json(),fresh={};
+  for(const v of data?.results?.bindings||[]){
+   const code=v.iata?.value,n={zh:v.zh?.value||"",ja:v.ja?.value||"",en:v.en?.value||""};
+   if(codes.includes(code)&&goodName(n)&&hasChinese(n.zh))fresh[code]=n;
+  }
+  Object.assign(trilingual,fresh);
+  if(Object.keys(fresh).length){
+   try{const old=JSON.parse(localStorage.getItem(NAMES_KEY)||"{}");localStorage.setItem(NAMES_KEY,JSON.stringify({...old,...fresh}))}catch{}
+  }
+ }catch(e){console.warn("Airport-name lookup unavailable; flights unchanged",e)}
+ finally{
+  namesLookupPending=false;
+  if(snapshot){
+    renderFingerprint="";displaySnapshot();
+    const all=[...new Set(snapshot.flights.map(f=>String(f.destCode||"").toUpperCase()).filter(c=>/^[A-Z]{3}$/.test(c)))];
+    const missing=all.filter(c=>!trilingual[c]&&!DEST[c]),known=all.filter(c=>hasChinese(trilingual[c]?.zh||DEST[c]?.[0]||snapshot.flights.find(f=>f.destCode===c)?.zh)).length;
+    byId("namesCoverage").textContent="中文名稱覆蓋："+known+"/"+all.length+"；未完成三語："+(missing.join("、")||"無");
+  }
+ }
+}
+
 const LANGS = ["zh","ja","en"];
 const AIRPORTS = [
  {code:"TPE",name:"桃園國際機場",country:"臺灣",tz:TZ},
@@ -231,9 +288,11 @@ function parseTDXTime(raw){
  return Number.isFinite(parsed)?parsed:NaN;
 }
 function translate(record){
+ const names=nameByCode(String(record.destCode||"").toUpperCase());
+ if(names)return [names.zh,names.ja,names.en];
  const lookup=DEST[String(record.destCode||"").toUpperCase()];
  if(lookup)return lookup;
- const zh=String(record.zh||record.en||record.destCode||"未知");
+ const zh=hasChinese(record.zh)?String(record.zh):String(record.en||record.zh||record.destCode||"未知");
  const en=String(record.en||record.zh||record.destCode||"Unknown");
  return [zh,en,en]; // Unknown Japanese labels fall back to English, never invented.
 }
@@ -292,7 +351,7 @@ async function startSnapshot(force){
    if(validateCache(cached)){
      snapshot=cached;
      renderFingerprint="";
-     displaySnapshot();
+     displaySnapshot();auditNames();
      return;
    }
  }
@@ -307,7 +366,7 @@ async function startSnapshot(force){
    const data=await fetchTDX(startMs,endMs);
    if(data.code!==requestedCode)throw Error("Airport was changed during request");
    if(!saveStorage(key,data))mark("本次成功，但瀏覽器無法保存快取；重新開啟可能重查",false);
-   if(activeAirport.code===requestedCode){snapshot=data;renderFingerprint="";displaySnapshot()}
+   if(activeAirport.code===requestedCode){snapshot=data;renderFingerprint="";displaySnapshot();auditNames()}
  }catch(err){
    console.warn("TDX TPE query failed",err);
    if(activeAirport.code===requestedCode){
@@ -379,7 +438,7 @@ function displaySnapshot(){
 byId("backBtn").addEventListener("click",goBack);
 byId("refreshView").addEventListener("click",()=>displaySnapshot());
 byId("retryBtn").addEventListener("click",()=>startSnapshot(true));
-makeChoices();updateClocks();
+makeChoices();updateClocks();loadAirportNames();
 setInterval(()=>{
  updateClocks();
  if(selected&&snapshot)displaySnapshot();
