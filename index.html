@@ -288,6 +288,17 @@ function empty(message){
  const div=document.createElement("div");div.className="empty";div.textContent=message;
  byId("flightRows").replaceChildren(div);
 }
+// Use the trilingual airport dictionary, then known labels, then factual English fallback.
+function translate(record){
+ const code=String(record?.destCode||"").trim().toUpperCase();
+ const names=nameByCode(code);
+ if(names&&goodName(names))return [names.zh,names.ja,names.en];
+ const builtin=DEST[code];
+ if(builtin)return builtin;
+ const english=String(record?.en||record?.zh||code||"Unknown");
+ const chinese=hasChinese(record?.zh)?String(record.zh):english;
+ return [chinese,english,english]; // Never invent missing Japanese translation.
+}
 function jsonp(action,airport){
  return new Promise((resolve,reject)=>{
   const id="airport_cb_"+Math.random().toString(36).slice(2,11)+Date.now().toString(36);
@@ -385,7 +396,7 @@ async function startSnapshot(force){
     mark("真實資料讀取失敗："+String(err.message||err)+"；可手動重試",true);
     empty("無法取得 "+activeAirport.name+" 的真實航班。不使用假資料、不自動重試。");
    }
- }finally{requestPending=false}
+ }finally{requestPending=false;void showQuota()}
 }
 function timeTiles(ms){
  const group=document.createElement("span");group.className="clockTiles";
