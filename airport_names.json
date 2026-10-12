@@ -1,0 +1,552 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-12",
+  "description": "機場目的地名稱三語對照；靜態核對名稱優先於航班資料來源及 Wikidata 補查。",
+  "dataSources": [
+    "既有 CardHub / Airport 對照表",
+    "已核對主要亞洲民航機場名稱",
+    "Wikidata 自動補查僅保存於使用者瀏覽器"
+  ],
+  "airports": {
+    "AKJ": {
+      "zh": "旭川機場",
+      "ja": "旭川空港",
+      "en": "Asahikawa Airport"
+    },
+    "AKL": {
+      "zh": "奧克蘭",
+      "ja": "オークランド",
+      "en": "Auckland"
+    },
+    "AMS": {
+      "zh": "阿姆斯特丹",
+      "ja": "アムステルダム",
+      "en": "Amsterdam"
+    },
+    "AOJ": {
+      "zh": "青森機場",
+      "ja": "青森空港",
+      "en": "Aomori Airport"
+    },
+    "AXT": {
+      "zh": "秋田機場",
+      "ja": "秋田空港",
+      "en": "Akita Airport"
+    },
+    "BKI": {
+      "zh": "亞庇國際機場",
+      "ja": "コタキナバル国際空港",
+      "en": "Kota Kinabalu International Airport"
+    },
+    "BKK": {
+      "zh": "曼谷蘇凡納布",
+      "ja": "バンコク・スワンナプーム",
+      "en": "Bangkok Suvarnabhumi"
+    },
+    "BWN": {
+      "zh": "汶萊國際機場",
+      "ja": "ブルネイ国際空港",
+      "en": "Brunei International Airport"
+    },
+    "CAN": {
+      "zh": "廣州",
+      "ja": "広州",
+      "en": "Guangzhou"
+    },
+    "CDG": {
+      "zh": "巴黎戴高樂",
+      "ja": "パリ・シャルル・ド・ゴール",
+      "en": "Paris CDG"
+    },
+    "CGK": {
+      "zh": "雅加達蘇加諾哈達機場",
+      "ja": "スカルノ・ハッタ国際空港",
+      "en": "Jakarta Soekarno Hatta"
+    },
+    "CJJ": {
+      "zh": "清州國際機場",
+      "ja": "清州国際空港",
+      "en": "Cheongju International Airport"
+    },
+    "CJU": {
+      "zh": "濟州",
+      "ja": "済州",
+      "en": "Jeju"
+    },
+    "CKG": {
+      "zh": "重慶江北機場",
+      "ja": "重慶江北空港",
+      "en": "Chongqing Jiangbei Airport"
+    },
+    "CMJ": {
+      "zh": "七美機場",
+      "ja": "七美空港",
+      "en": "Qimei Airport"
+    },
+    "CNX": {
+      "zh": "清邁國際機場",
+      "ja": "チェンマイ国際空港",
+      "en": "Chiang Mai International Airport"
+    },
+    "CTS": {
+      "zh": "札幌新千歲",
+      "ja": "札幌・新千歳",
+      "en": "Sapporo New Chitose"
+    },
+    "CTU": {
+      "zh": "成都雙流",
+      "ja": "成都双流",
+      "en": "Chengdu Shuangliu"
+    },
+    "CYI": {
+      "zh": "嘉義機場",
+      "ja": "嘉義空港",
+      "en": "Chiayi Airport"
+    },
+    "DAD": {
+      "zh": "峴港",
+      "ja": "ダナン",
+      "en": "Da Nang"
+    },
+    "DMK": {
+      "zh": "曼谷廊曼",
+      "ja": "バンコク・ドンムアン",
+      "en": "Bangkok Don Mueang"
+    },
+    "DPS": {
+      "zh": "峇里島登巴薩",
+      "ja": "バリ・デンパサール",
+      "en": "Bali Denpasar"
+    },
+    "DXB": {
+      "zh": "杜拜",
+      "ja": "ドバイ",
+      "en": "Dubai"
+    },
+    "FKS": {
+      "zh": "福島機場",
+      "ja": "福島空港",
+      "en": "Fukushima Airport"
+    },
+    "FOC": {
+      "zh": "福州長樂機場",
+      "ja": "福州長楽空港",
+      "en": "Fuzhou Changle Airport"
+    },
+    "FRA": {
+      "zh": "法蘭克福",
+      "ja": "フランクフルト",
+      "en": "Frankfurt"
+    },
+    "FSZ": {
+      "zh": "靜岡機場",
+      "ja": "静岡空港",
+      "en": "Shizuoka Airport"
+    },
+    "FUK": {
+      "zh": "福岡",
+      "ja": "福岡",
+      "en": "Fukuoka"
+    },
+    "GMP": {
+      "zh": "首爾金浦",
+      "ja": "ソウル・金浦",
+      "en": "Seoul Gimpo"
+    },
+    "GNI": {
+      "zh": "綠島機場",
+      "ja": "緑島空港",
+      "en": "Green Island Airport"
+    },
+    "HAN": {
+      "zh": "河內",
+      "ja": "ハノイ",
+      "en": "Hanoi"
+    },
+    "HGH": {
+      "zh": "杭州",
+      "ja": "杭州",
+      "en": "Hangzhou"
+    },
+    "HIJ": {
+      "zh": "廣島機場",
+      "ja": "広島空港",
+      "en": "Hiroshima Airport"
+    },
+    "HKD": {
+      "zh": "函館機場",
+      "ja": "函館空港",
+      "en": "Hakodate Airport"
+    },
+    "HKG": {
+      "zh": "香港",
+      "ja": "香港",
+      "en": "Hong Kong"
+    },
+    "HKT": {
+      "zh": "普吉國際機場",
+      "ja": "プーケット国際空港",
+      "en": "Phuket International Airport"
+    },
+    "HND": {
+      "zh": "東京羽田",
+      "ja": "東京・羽田",
+      "en": "Tokyo Haneda"
+    },
+    "HUN": {
+      "zh": "花蓮機場",
+      "ja": "花蓮空港",
+      "en": "Hualien Airport"
+    },
+    "IBR": {
+      "zh": "茨城機場",
+      "ja": "茨城空港",
+      "en": "Ibaraki Airport"
+    },
+    "ICN": {
+      "zh": "首爾仁川",
+      "ja": "ソウル・仁川",
+      "en": "Seoul Incheon"
+    },
+    "ITM": {
+      "zh": "大阪伊丹",
+      "ja": "大阪・伊丹",
+      "en": "Osaka Itami"
+    },
+    "JFK": {
+      "zh": "紐約甘迺迪",
+      "ja": "ニューヨーク・JFK",
+      "en": "New York JFK"
+    },
+    "JHB": {
+      "zh": "新山士乃國際機場",
+      "ja": "スナイ国際空港",
+      "en": "Senai International Airport"
+    },
+    "KBV": {
+      "zh": "喀比國際機場",
+      "ja": "クラビー国際空港",
+      "en": "Krabi International Airport"
+    },
+    "KCH": {
+      "zh": "古晉國際機場",
+      "ja": "クチン国際空港",
+      "en": "Kuching International Airport"
+    },
+    "KCZ": {
+      "zh": "高知龍馬機場",
+      "ja": "高知龍馬空港",
+      "en": "Kochi Ryoma Airport"
+    },
+    "KHH": {
+      "zh": "高雄",
+      "ja": "高雄",
+      "en": "Kaohsiung"
+    },
+    "KIJ": {
+      "zh": "新潟機場",
+      "ja": "新潟空港",
+      "en": "Niigata Airport"
+    },
+    "KIX": {
+      "zh": "大阪關西",
+      "ja": "大阪・関西",
+      "en": "Osaka Kansai"
+    },
+    "KMI": {
+      "zh": "宮崎機場",
+      "ja": "宮崎空港",
+      "en": "Miyazaki Airport"
+    },
+    "KMQ": {
+      "zh": "小松機場",
+      "ja": "小松空港",
+      "en": "Komatsu Airport"
+    },
+    "KNH": {
+      "zh": "金門尚義機場",
+      "ja": "金門尚義空港",
+      "en": "Kinmen Shangyi Airport"
+    },
+    "KOJ": {
+      "zh": "鹿兒島機場",
+      "ja": "鹿児島空港",
+      "en": "Kagoshima Airport"
+    },
+    "KPO": {
+      "zh": "浦項慶州機場",
+      "ja": "浦項慶州空港",
+      "en": "Pohang Gyeongju Airport"
+    },
+    "KUL": {
+      "zh": "吉隆坡",
+      "ja": "クアラルンプール",
+      "en": "Kuala Lumpur"
+    },
+    "KWE": {
+      "zh": "貴陽龍洞堡機場",
+      "ja": "貴陽龍洞堡空港",
+      "en": "Guiyang Longdongbao Airport"
+    },
+    "KYD": {
+      "zh": "蘭嶼機場",
+      "ja": "蘭嶼空港",
+      "en": "Orchid Island Airport"
+    },
+    "LAX": {
+      "zh": "洛杉磯",
+      "ja": "ロサンゼルス",
+      "en": "Los Angeles"
+    },
+    "LHR": {
+      "zh": "倫敦希斯洛",
+      "ja": "ロンドン・ヒースロー",
+      "en": "London Heathrow"
+    },
+    "LZN": {
+      "zh": "馬祖南竿機場",
+      "ja": "馬祖南竿空港",
+      "en": "Matsu Nangan Airport"
+    },
+    "MEL": {
+      "zh": "墨爾本",
+      "ja": "メルボルン",
+      "en": "Melbourne"
+    },
+    "MFK": {
+      "zh": "馬祖北竿機場",
+      "ja": "馬祖北竿空港",
+      "en": "Matsu Beigan Airport"
+    },
+    "MFM": {
+      "zh": "澳門",
+      "ja": "マカオ",
+      "en": "Macau"
+    },
+    "MNL": {
+      "zh": "馬尼拉",
+      "ja": "マニラ",
+      "en": "Manila"
+    },
+    "MYJ": {
+      "zh": "松山機場（日本）",
+      "ja": "松山空港",
+      "en": "Matsuyama Airport"
+    },
+    "MZG": {
+      "zh": "澎湖機場",
+      "ja": "澎湖空港",
+      "en": "Penghu Airport"
+    },
+    "NGO": {
+      "zh": "名古屋中部",
+      "ja": "名古屋・中部",
+      "en": "Nagoya Chubu"
+    },
+    "NKG": {
+      "zh": "南京祿口機場",
+      "ja": "南京禄口空港",
+      "en": "Nanjing Lukou Airport"
+    },
+    "NRT": {
+      "zh": "東京成田",
+      "ja": "東京・成田",
+      "en": "Tokyo Narita"
+    },
+    "OIT": {
+      "zh": "大分機場",
+      "ja": "大分空港",
+      "en": "Oita Airport"
+    },
+    "OKA": {
+      "zh": "沖繩那霸",
+      "ja": "沖縄・那覇",
+      "en": "Okinawa Naha"
+    },
+    "OKJ": {
+      "zh": "岡山機場",
+      "ja": "岡山空港",
+      "en": "Okayama Airport"
+    },
+    "PEK": {
+      "zh": "北京首都",
+      "ja": "北京首都",
+      "en": "Beijing Capital"
+    },
+    "PEN": {
+      "zh": "檳城國際機場",
+      "ja": "ペナン国際空港",
+      "en": "Penang International Airport"
+    },
+    "PKX": {
+      "zh": "北京大興",
+      "ja": "北京大興",
+      "en": "Beijing Daxing"
+    },
+    "PNH": {
+      "zh": "金邊國際機場",
+      "ja": "プノンペン国際空港",
+      "en": "Phnom Penh International Airport"
+    },
+    "PUS": {
+      "zh": "釜山",
+      "ja": "釜山",
+      "en": "Busan"
+    },
+    "PVG": {
+      "zh": "上海浦東",
+      "ja": "上海浦東",
+      "en": "Shanghai Pudong"
+    },
+    "RGN": {
+      "zh": "仰光國際機場",
+      "ja": "ヤンゴン国際空港",
+      "en": "Yangon International Airport"
+    },
+    "RMQ": {
+      "zh": "臺中國際機場",
+      "ja": "台中国際空港",
+      "en": "Taichung International Airport"
+    },
+    "SAI": {
+      "zh": "暹粒吳哥國際機場",
+      "ja": "シェムリアップ・アンコール国際空港",
+      "en": "Siem Reap Angkor International Airport"
+    },
+    "SDJ": {
+      "zh": "仙台機場",
+      "ja": "仙台空港",
+      "en": "Sendai Airport"
+    },
+    "SEA": {
+      "zh": "西雅圖",
+      "ja": "シアトル",
+      "en": "Seattle"
+    },
+    "SFO": {
+      "zh": "舊金山",
+      "ja": "サンフランシスコ",
+      "en": "San Francisco"
+    },
+    "SGN": {
+      "zh": "胡志明市",
+      "ja": "ホーチミン",
+      "en": "Ho Chi Minh City"
+    },
+    "SHA": {
+      "zh": "上海虹橋",
+      "ja": "上海虹橋",
+      "en": "Shanghai Hongqiao"
+    },
+    "SIN": {
+      "zh": "新加坡樟宜",
+      "ja": "シンガポール・チャンギ",
+      "en": "Singapore Changi"
+    },
+    "SUB": {
+      "zh": "泗水朱安達國際機場",
+      "ja": "ジュアンダ国際空港",
+      "en": "Surabaya Juanda"
+    },
+    "SYD": {
+      "zh": "雪梨",
+      "ja": "シドニー",
+      "en": "Sydney"
+    },
+    "SZX": {
+      "zh": "深圳",
+      "ja": "深圳",
+      "en": "Shenzhen"
+    },
+    "TAE": {
+      "zh": "大邱國際機場",
+      "ja": "大邱国際空港",
+      "en": "Daegu International Airport"
+    },
+    "TAK": {
+      "zh": "高松機場",
+      "ja": "高松空港",
+      "en": "Takamatsu Airport"
+    },
+    "TAO": {
+      "zh": "青島膠東機場",
+      "ja": "青島膠東空港",
+      "en": "Qingdao Jiaodong Airport"
+    },
+    "TFU": {
+      "zh": "成都天府",
+      "ja": "成都天府",
+      "en": "Chengdu Tianfu"
+    },
+    "TNN": {
+      "zh": "臺南機場",
+      "ja": "台南空港",
+      "en": "Tainan Airport"
+    },
+    "TOY": {
+      "zh": "富山機場",
+      "ja": "富山空港",
+      "en": "Toyama Airport"
+    },
+    "TPE": {
+      "zh": "桃園國際機場",
+      "ja": "台湾桃園国際空港",
+      "en": "Taiwan Taoyuan International Airport"
+    },
+    "TSA": {
+      "zh": "臺北松山",
+      "ja": "台北松山",
+      "en": "Taipei Songshan"
+    },
+    "TTT": {
+      "zh": "臺東機場",
+      "ja": "台東空港",
+      "en": "Taitung Airport"
+    },
+    "UKB": {
+      "zh": "神戶機場",
+      "ja": "神戸空港",
+      "en": "Kobe Airport"
+    },
+    "USN": {
+      "zh": "蔚山機場",
+      "ja": "蔚山空港",
+      "en": "Ulsan Airport"
+    },
+    "VTE": {
+      "zh": "永珍瓦岱國際機場",
+      "ja": "ワットタイ国際空港",
+      "en": "Vientiane Wattay International Airport"
+    },
+    "WOT": {
+      "zh": "望安機場",
+      "ja": "望安空港",
+      "en": "Wang-an Airport"
+    },
+    "WUH": {
+      "zh": "武漢天河機場",
+      "ja": "武漢天河空港",
+      "en": "Wuhan Tianhe Airport"
+    },
+    "XMN": {
+      "zh": "廈門",
+      "ja": "厦門",
+      "en": "Xiamen"
+    },
+    "YNY": {
+      "zh": "襄陽國際機場",
+      "ja": "襄陽国際空港",
+      "en": "Yangyang International Airport"
+    },
+    "YVR": {
+      "zh": "溫哥華",
+      "ja": "バンクーバー",
+      "en": "Vancouver"
+    },
+    "YYZ": {
+      "zh": "多倫多",
+      "ja": "トロント",
+      "en": "Toronto"
+    }
+  }
+}
