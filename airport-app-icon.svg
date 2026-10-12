@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" aria-label="Airport departure board">
+<rect width="192" height="192" rx="37" fill="#0b0d11"/>
+<rect x="13" y="22" width="166" height="148" rx="15" fill="#171a20" stroke="#4d5561" stroke-width="4"/>
+<path d="M25 95H167" stroke="#424851" stroke-width="3"/>
+<path d="M107 43L145 63L107 69L85 99L71 97L76 68L49 61L36 68L34 60L58 43L102 53Z" fill="#f0c040" stroke="#f0c040" stroke-width="2" stroke-linejoin="round"/>
+<path d="M31 127H62M77 127H106M121 127H160" stroke="#f0c040" stroke-width="10" stroke-linecap="square"/>
+</svg>
