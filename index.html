@@ -2,224 +2,431 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>機場每日航班翻牌看板｜真實資料</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>世界機場翻牌看板｜全球真實出發航班</title>
 <style>
-:root{--bg:#0b0b0b;--board:#141414;--tile:#202020;--edge:#383838;--gold:#f0c040;--dim:#aaa;--ink:#fff}
-*{box-sizing:border-box}body{font-family:"Courier New",monospace,system-ui,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:12px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
-#openPipBtn{border:1px solid #5b4c29;background:#292318;color:var(--gold);padding:9px 14px;border-radius:5px;margin-bottom:12px;font-size:13px;cursor:pointer}
-.widget{width:100%;max-width:440px;border:2px solid #424242;border-radius:7px;background:var(--board);padding:12px;box-shadow:0 8px 26px #000b}
-.top{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#b6a16c;font-size:11px}
-select{background:#242424;color:#f3ce6b;border:1px solid #555;border-radius:4px;padding:5px}
-.head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:12px 0;border-bottom:1px solid #444;padding-bottom:12px}
-.head strong{text-align:center;font-size:17px;letter-spacing:1px;color:var(--gold)}
-.nav{border:1px solid #555;background:#252525;color:var(--gold);font-size:20px;border-radius:4px;padding:5px 11px;cursor:pointer}
-.board-heading{display:grid;grid-template-columns:88px 82px minmax(0,1fr);gap:5px;color:#9a9a9a;font-size:11px;padding:4px 1px 8px}
-.flight-row{display:grid;grid-template-columns:88px 82px minmax(0,1fr);gap:5px;align-items:stretch;border-top:1px solid #393939;padding:9px 1px}
-.flap-group{display:flex;align-items:center;gap:2px;min-width:0}
-.flap{position:relative;min-width:15px;height:30px;display:flex;align-items:center;justify-content:center;background:linear-gradient(#292929 0 49%,#151515 50% 100%);color:var(--gold);border:1px solid #333;border-radius:3px;box-shadow:0 3px 3px #000;font-size:18px;font-weight:700;line-height:30px;overflow:hidden;perspective:170px}
-.flap:after,.dest:after{position:absolute;content:"";height:1px;background:#050505;top:50%;left:0;right:0;pointer-events:none}
-.flap.animate,.dest.animate{animation:flip .55s ease-in-out backwards}
-@keyframes flip{0%{transform:rotateX(-80deg);opacity:.2}100%{transform:rotateX(0);opacity:1}}
-.flightno{display:flex;align-items:center;font-weight:700;font-size:13px;letter-spacing:-.4px;white-space:nowrap;color:#f4f0e6;overflow:hidden;text-overflow:ellipsis;background:#222;border:1px solid #363636;border-radius:3px;padding:0 5px}
-.dest{position:relative;background:linear-gradient(#242424 0 49%,#161616 50% 100%);color:var(--gold);min-width:0;border:1px solid #333;border-radius:3px;font-size:13px;font-weight:700;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 5px}
-.empty{border-top:1px solid #3d3d3d;padding:22px 9px;line-height:1.7;text-align:center;color:#bfbfbf;font-size:12px}
-.foot{border-top:1px solid #444;margin-top:9px;padding-top:10px;color:var(--dim);font-size:11px;display:flex;flex-direction:column;gap:5px}
-.footline{display:flex;justify-content:space-between;gap:8px;align-items:center}
-#localRefresh{background:none;border:1px solid #555;border-radius:4px;color:var(--gold);font-size:11px;padding:5px;cursor:pointer}
-.warning{color:#ecc374}
-#retryFetch{background:#403113;border:1px solid #6c5420;color:#ffd17b;border-radius:4px;font-size:11px;padding:5px;cursor:pointer}
-@media(max-width:370px){body{padding:4px}.widget{padding:7px}.board-heading,.flight-row{grid-template-columns:82px 77px minmax(0,1fr);gap:3px}.flap{min-width:14px;font-size:17px}.dest{font-size:11px}.flightno{font-size:12px}}
-@media(prefers-reduced-motion:reduce){.flap.animate,.dest.animate{animation:none}}
+:root{--bg:#0b0d11;--panel:#171a20;--line:#3b414a;--gold:#f0c040;--muted:#9fa9b8;--fg:#f0f3f7}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:14px/1.55 system-ui,-apple-system,"Noto Sans TC",sans-serif;padding:12px;margin:0;min-height:100vh}
+main{max-width:530px;margin:0 auto}
+h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
+.subtitle{font-size:13px;color:var(--muted);margin:3px 0 18px}
+.note{background:#2e2819;border:1px solid #725f2d;border-radius:9px;padding:10px 12px;color:#f5d78b;font-size:12px;margin:12px 0}
+.private-access{display:flex;flex-direction:column;gap:7px;margin:12px 0 15px;padding:13px;border:1px solid #66795e;border-radius:10px;background:#172419}
+.private-access strong{font-size:14px;color:#d1eabf}.private-access span,.private-access small{font-size:11px;color:#c1d2bc}
+.private-link{display:block;text-decoration:none;text-align:center;background:#365a32;border:1px solid #5f9451;padding:10px 8px;color:#f8ffed;font-weight:700;border-radius:6px}
+.private-link:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.hidden{display:none!important}
+.clockbar{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;background:#1d222b;margin-bottom:14px;flex-wrap:wrap}
+.clockbar strong{font-size:17px;color:#fff;font-variant-numeric:tabular-nums}
+.clockbar small{color:var(--muted)}
+.sectionTitle{font-size:15px;font-weight:700;color:#fff;margin:13px 0 8px}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.airportChoice{display:block;text-align:left;width:100%;min-height:110px;background:linear-gradient(165deg,#282d36,#191c22);border:1px solid #4d5561;border-radius:10px;padding:11px;color:var(--fg);cursor:pointer}
+.airportChoice:active,.airportChoice:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.airportChoice .slot{font-size:10px;color:#a9b0b8;letter-spacing:1px}
+.airportChoice .place{display:flex;justify-content:space-between;align-items:center;margin:4px 0 3px}
+.airportChoice .place strong{font-size:22px;color:var(--gold)}
+.airportChoice .place em{font-size:11px;font-style:normal;color:#c8d0da}
+.airportChoice .name{font-size:13px;font-weight:600}
+.airportChoice .local{font-size:11px;color:#c4c6d0;margin-top:4px}
+#yesterday{margin-bottom:8px;color:#efcf7d;font-size:12px}
+.bottomHint{font-size:11px;color:var(--muted);margin:12px 0}
+.board{background:#15171b;border:2px solid #3c434e;padding:12px;border-radius:9px;box-shadow:0 8px 25px #000a}
+.head{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:12px}
+.head h2{margin:0;color:var(--gold);font-size:18px;line-height:1.3}
+.head small{color:var(--muted);font-size:11px}
+.button{background:#2d343d;border:1px solid #69717d;color:var(--fg);border-radius:6px;padding:8px 11px;font-size:12px;cursor:pointer}
+.button.action{background:#725a1a;border-color:#997b2b;color:#fff4ce}
+.timeSpan{font-size:11px;color:#b9c2cc;padding:10px 0;border-bottom:1px solid var(--line)}
+.headerRow,.flightRow{display:grid;grid-template-columns:84px 85px minmax(0,1fr);gap:5px;align-items:center}
+.headerRow{font-size:10px;color:#a9b3bb;padding:12px 0 8px}
+.flightRow{min-height:51px;border-top:1px solid #333b46;padding:8px 0}
+.clockTiles{display:flex;gap:1px;align-items:center;overflow:hidden}
+.flap{position:relative;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(#292929 0 49%,#161616 50%);color:var(--gold);border:1px solid #464646;border-radius:3px;font:700 18px "Courier New",monospace;min-width:15px;height:33px;box-shadow:0 2px 4px #000;transform-origin:50% 50%}
+.flap:after,.dest:after{position:absolute;top:50%;left:0;right:0;height:1px;background:#030303;content:"";pointer-events:none}
+.flap.flip{animation:flip .55s ease-in-out backwards}
+@keyframes flip{0%{transform:rotateX(-80deg);opacity:.25}100%{transform:rotateX(0);opacity:1}}
+.flightCode{color:#fff;background:#24282e;border:1px solid #3c424b;border-radius:3px;padding:7px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 13px "Courier New",monospace}
+.dest{position:relative;border:1px solid #484848;border-radius:3px;background:linear-gradient(#262626 0 49%,#181818 50%);color:var(--gold);height:34px;display:flex;align-items:center;overflow:hidden;padding:0 4px;font-size:12px}
+.dest .ticker{white-space:nowrap;display:inline-block}
+.dest .ticker.scrolling{animation:marquee 3s linear infinite alternate}
+@keyframes marquee{0%,13%{transform:translateX(0)}90%,100%{transform:translateX(var(--travel,0px))}}
+.footer{padding-top:11px;border-top:1px solid #303540;margin-top:10px;color:var(--muted);font-size:11px;display:flex;flex-direction:column;gap:6px}
+.footerLine{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.empty{padding:18px 8px;border-top:1px solid #323840;color:#cbd2dc;text-align:center;line-height:1.7}
+#fetchStatus{color:#dbdbd5;white-space:normal}
+#sourceNote{font-size:10px;color:#adb6c6}
+@media(max-width:370px){body{padding:5px}.board{padding:7px}.headerRow,.flightRow{grid-template-columns:81px 76px minmax(0,1fr);gap:3px}.flap{min-width:14px}.flightCode{font-size:11px}.dest{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.flap.flip,.dest .ticker.scrolling{animation:none}}
 </style>
 </head>
 <body>
-<button id="openPipBtn">📌 開啟桌面置頂懸浮窗</button>
-<main class="widget" id="widget">
-  <div class="top"><span>DEPARTURES / DAILY SNAPSHOT</span><select id="language" aria-label="顯示語言"><option value="zh">繁體中文</option><option value="ja">日本語</option><option value="en">English</option></select></div>
-  <div class="head"><button class="nav" id="previous" aria-label="前一個機場">◀</button><strong id="airportName">--</strong><button class="nav" id="next" aria-label="下一個機場">▶</button></div>
-  <div class="board-heading"><span id="hTime">時間</span><span id="hFlight">航班</span><span id="hDest">目的地</span></div>
-  <div id="flightRows" aria-live="polite"><div class="empty">讀取本日資料中…</div></div>
-  <div class="foot">
-    <div class="footline"><span id="cacheStatus">尚未讀取</span><span><button id="retryFetch" style="display:none">重新抓取一次</button> <button id="localRefresh">只更新畫面 ↻</button></span></div>
-    <span id="updatedAt">抓取時間：--</span>
-    <span class="warning" id="disclaimer">每日航班快照，非即時延誤資訊。</span>
+<main>
+ <h1>✈ WORLD DEPARTURES</h1>
+ <p class="subtitle">世界機場每日探索｜黑底黃字翻牌看板</p>
+ <div class="note">🌎 全球出發航班翻牌｜每日六座推薦，保留昨日機場，國內國際航班混合。<b>免輸入通行碼</b>；全球共用每天最多兩座機場的查詢名額。<span id="quotaStatus">正在檢查後端…</span></div>
+ <div class="clockbar"><div><small>台灣現在時間</small><div><strong id="taiwanClock">--:--</strong></div></div><div><small>目前機場當地時間</small><div><strong id="airportClock">--:--</strong></div></div></div>
+ <section id="chooseScreen">
+   <div class="sectionTitle">今天想看看哪個機場？（最多選兩座）</div>
+   <div id="yesterday" class="hidden"></div>
+   <div class="choices" id="airportChoices" aria-label="全球機場推薦選項"></div>
+   <p class="bottomHint" id="selectionHint">點選機場才讀取 AeroDataBox，每座每天保留首次查詢快照。</p>
+ </section>
+ <section id="boardScreen" class="hidden">
+  <div class="board">
+   <div class="head"><div><h2 id="boardAirportName">機場即時出發看板</h2><small id="boardAirportSubtitle">臺灣 · Taiwan · Asia/Taipei</small></div><button id="backBtn" type="button" class="button">重新選機場</button></div>
+   <div id="windowText" class="timeSpan">查詢區間：--</div>
+   <div class="headerRow"><span>TIME</span><span>FLIGHT</span><span>DESTINATION</span></div>
+   <div id="flightRows"><div class="empty">準備讀取航班資料…</div></div>
+   <div class="footer">
+     <div class="footerLine"><span id="fetchStatus">尚未查詢</span><button id="refreshView" class="button" type="button">只更新畫面 ↻</button></div>
+     <div class="footerLine"><span id="fetchedAt">資料取得時間：--</span><button id="retryBtn" class="button action hidden" type="button">手動重試查詢</button></div>
+     <div>目的地每 3 秒切換：繁體中文 → 日本語 → English</div>
+     <div id="namesCoverage">名稱完整率檢查中…</div>
+     <div id="sourceNote">資料來源：AeroDataBox。選取當下的 12 小時快照（國內與國際線），不會自動更新。</div>
+   </div>
   </div>
+ </section>
 </main>
 <script>
 "use strict";
-// 一天一個機場「每個瀏覽器裝置」最多嘗試一次；若要所有用戶共用一次，需另外設置伺服器端每日快取。
-const AIRPORTS=[
-  {code:"HND",name:{zh:"東京羽田",ja:"東京羽田",en:"Tokyo Haneda"},tz:"Asia/Tokyo",source:"pending"},
-  {code:"TPE",name:{zh:"桃園國際機場",ja:"台北桃園",en:"Taoyuan"},tz:"Asia/Taipei",source:"TDX"},
-  {code:"TSA",name:{zh:"台北松山機場",ja:"台北松山",en:"Songshan"},tz:"Asia/Taipei",source:"TDX"}
-];
-const I18N={
-  zh:{headers:["時間","航班","目的地"],refresh:"只更新畫面 ↻",waiting:"讀取本日資料中…",none:"快取中沒有剩餘的今日航班。",missing:"羽田目前沒有已授權且允許快取的班表資料來源；暫停使用原來的非正式 FR24 介面。",failed:"今天讀取真實資料失敗。為避免耗用額度，不會自動重試；可按按鈕手動再試一次。",status:"本日快取",attempt:"今日已嘗試",cached:"已讀取",at:"抓取時間",note:"每日班表快照，非即時延誤／取消資訊；來源未必涵蓋全日。",partial:"資料可能不完整（達到單次取回筆數上限）。",storage:"瀏覽器未開放本地儲存，為避免重複耗用額度，沒有連接 API。",source:"本日快取"},
-  ja:{headers:["時刻","便名","行先"],refresh:"表示だけ更新 ↻",waiting:"読み込み中…",none:"本日分の今後の便がありません。",missing:"羽田の許諾済み時刻表ソースは未設定。非公式 FR24 API は停止しました。",failed:"取得に失敗しました。自動再試行しません。手動ボタンで再試行できます。",status:"本日キャッシュ",attempt:"本日取得試行済み",cached:"取得済み",at:"取得時刻",note:"一日一回の時刻表です。遅延・欠航の速報ではなく、全便を含むとは限りません。",partial:"取得上限に達したため一部欠ける可能性があります。",storage:"ローカル保存を利用できないため API を呼び出しません。",source:"保存データ"},
-  en:{headers:["Time","Flight","Destination"],refresh:"Refresh view only ↻",waiting:"Loading daily data…",none:"No further flights in today's snapshot.",missing:"No licensed cacheable Haneda schedule configured; unofficial FR24 endpoint disabled.",failed:"Today's fetch failed; automatic retries are disabled. Retry manually if needed.",status:"Daily cache",attempt:"Attempted today",cached:"Loaded",at:"Fetched",note:"Daily timetable snapshot, not live delay/cancellation data; may not cover all flights.",partial:"Some flights may be missing due to source result limit.",storage:"Local storage is unavailable; API fetch is blocked to prevent repeated usage.",source:"Daily snapshot"}
-};
-const DEST={
-  zh:{HND:"東京羽田",NRT:"東京成田",KIX:"大阪關西",KHH:"高雄",HKG:"香港",ICN:"首爾仁川",OKA:"沖繩那霸",FUK:"福岡",CTS:"札幌新千歲",TSA:"台北松山",TPE:"桃園"},
-  ja:{HND:"羽田",NRT:"成田",KIX:"関西",KHH:"高雄",HKG:"香港",ICN:"仁川",OKA:"那覇",FUK:"福岡",CTS:"新千歳",TSA:"松山",TPE:"桃園"},
-  en:{HND:"Haneda",NRT:"Narita",KIX:"Kansai",KHH:"Kaohsiung",HKG:"Hong Kong",ICN:"Incheon",OKA:"Okinawa",FUK:"Fukuoka",CTS:"Sapporo",TSA:"Songshan",TPE:"Taoyuan"}
-};
-let airportIndex=1,lang="zh",shownKey="",currentDay="";
-const CACHE_PREFIX="airport-live-v4:";
-function el(id){return document.getElementById(id)||(window.documentPictureInPicture&&window.documentPictureInPicture.window&&window.documentPictureInPicture.window.document.getElementById(id))}
-function partsNow(tz,instant=new Date()){
-  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(instant);
-  const v={};parts.forEach(p=>v[p.type]=p.value);
-  return {date:v.year+"-"+v.month+"-"+v.day,time:v.hour+":"+v.minute};
-}
-function readCache(key){try{return JSON.parse(localStorage.getItem(key)||"null")}catch{return null}}
-function writeCache(key,val){try{localStorage.setItem(key,JSON.stringify(val));return true}catch{return false}}
-function storageAvailable(){try{const k=CACHE_PREFIX+"probe";localStorage.setItem(k,"1");localStorage.removeItem(k);return true}catch{return false}}
-function cacheKey(ap,date){return CACHE_PREFIX+ap.code+":"+date}
-function formatClock(ms,tz){return new Intl.DateTimeFormat("en-GB",{timeZone:tz,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(ms))}
-function sourceTime(raw){
-  if(raw==null)return NaN;
-  const s=String(raw).trim();
-  if(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(s))return Date.parse(s+"+08:00");
-  return Date.parse(s);
-}
-function clearOldCache(ap,date){
-  try{for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith(CACHE_PREFIX+ap.code+":")&&k!==cacheKey(ap,date))localStorage.removeItem(k)}}catch{}
-}
-function normalizeTDX(item,ap,date){
-  const raw=item.ScheduleDepartureTime||item.TargetDepartureTime||"";
-  const ms=sourceTime(raw);
-  if(!Number.isFinite(ms)||partsNow(ap.tz,new Date(ms)).date!==date)return null;
-  const code=String(item.AirlineID||"")+String(item.FlightNumber||"");
-  if(!code.trim())return null;
-  const master=String(item.MasterFlightNumber||"");
-  if(master&&master!==String(item.FlightNumber||""))return null;
-  const destCode=String(item.ArrivalAirportID||"");
-  const destRaw=item.ArrivalAirportName||{};
-  const name=typeof destRaw==="string"?destRaw:String(destRaw.Zh_tw||destRaw.En||destCode);
-  return {timeMs:ms,code,destCode,destName:name};
-}
-async function fetchTDX(ap,date){
-  const url="https://tdx.transportdata.tw/api/basic/v2/Air/FIDS/Airport/Departure/"+ap.code+"?%24top=1000&%24format=JSON";
-  const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),15000);
+const TZ = "Asia/Taipei";
+const HOURS = 12;
+const MS_HOUR = 3600000;
+const CACHE_PREFIX = "world-airport-real-v1:";
+const DAILY_SELECTIONS = "world-airport-selected-v1:";
+const LAST_CHOICE="world-airport-last-v1";
+const PROXY_URL="https://script.google.com/macros/s/AKfycbzsvaUzYCtttFUwGcC98ffNAVgQFl0oNBdCKn1g2DOVlGcFSbPgBG-E7TLplzzrePZiuw/exec";
+const POOL_TEXT=`HND|東京羽田|日本|Asia/Tokyo;NRT|東京成田|日本|Asia/Tokyo;KIX|大阪關西|日本|Asia/Tokyo;CTS|札幌新千歲|日本|Asia/Tokyo;FUK|福岡|日本|Asia/Tokyo;ICN|首爾仁川|韓國|Asia/Seoul;HKG|香港國際機場|香港|Asia/Hong_Kong;SIN|新加坡樟宜|新加坡|Asia/Singapore;BKK|曼谷蘇凡納布|泰國|Asia/Bangkok;KUL|吉隆坡|馬來西亞|Asia/Kuala_Lumpur;TPE|桃園國際機場|臺灣|Asia/Taipei;MNL|馬尼拉|菲律賓|Asia/Manila;CGK|雅加達|印尼|Asia/Jakarta;DEL|德里|印度|Asia/Kolkata;DXB|杜拜|阿聯酋|Asia/Dubai;DOH|多哈|卡達|Asia/Qatar;IST|伊斯坦堡|土耳其|Europe/Istanbul;LHR|倫敦希斯洛|英國|Europe/London;LGW|倫敦蓋威克|英國|Europe/London;MAN|曼徹斯特|英國|Europe/London;CDG|巴黎戴高樂|法國|Europe/Paris;AMS|阿姆斯特丹|荷蘭|Europe/Amsterdam;FRA|法蘭克福|德國|Europe/Berlin;MUC|慕尼黑|德國|Europe/Berlin;FCO|羅馬費米齊諾|義大利|Europe/Rome;MAD|馬德里|西班牙|Europe/Madrid;BCN|巴塞隆納|西班牙|Europe/Madrid;HEL|赫爾辛基|芬蘭|Europe/Helsinki;ARN|斯德哥爾摩|瑞典|Europe/Stockholm;OSL|奧斯陸|挪威|Europe/Oslo;CPH|哥本哈根|丹麥|Europe/Copenhagen;JFK|紐約甘迺迪|美國|America/New_York;EWR|紐華克|美國|America/New_York;LAX|洛杉磯|美國|America/Los_Angeles;SFO|舊金山|美國|America/Los_Angeles;SEA|西雅圖|美國|America/Los_Angeles;ORD|芝加哥歐海爾|美國|America/Chicago;ATL|亞特蘭大|美國|America/New_York;DFW|達拉斯沃斯堡|美國|America/Chicago;MIA|邁阿密|美國|America/New_York;YYZ|多倫多|加拿大|America/Toronto;YVR|溫哥華|加拿大|America/Vancouver;MEX|墨西哥城|墨西哥|America/Mexico_City;GRU|聖保羅|巴西|America/Sao_Paulo;SYD|雪梨|澳洲|Australia/Sydney;MEL|墨爾本|澳洲|Australia/Melbourne;BNE|布里斯本|澳洲|Australia/Brisbane;AKL|奧克蘭|紐西蘭|Pacific/Auckland;JNB|約翰尼斯堡|南非|Africa/Johannesburg;CAI|開羅|埃及|Africa/Cairo`;
+
+const TRILINGUAL_URL="./airport_names.json";
+const NAMES_KEY="airport-translation-cache-v1:";
+let trilingual={},namesLookupPending=false,namesAttempted=new Set();
+function goodName(v){return v&&["zh","ja","en"].every(k=>typeof v[k]==="string"&&v[k].trim())}
+function hasChinese(v){return /[\u3400-\u9fff]/.test(String(v||""))}
+function nameByCode(c){return trilingual[c]||null}
+async function loadAirportNames(){
+ try{
+  const r=await fetch(TRILINGUAL_URL,{cache:"force-cache"});if(!r.ok)throw Error("name file HTTP "+r.status);
+  const d=await r.json();
+  for(const [c,v] of Object.entries(d.airports||{}))if(/^[A-Z]{3}$/.test(c)&&goodName(v))trilingual[c]=v;
   try{
-    const r=await fetch(url,{signal:controller.signal,cache:"no-store"});
-    if(!r.ok)throw Error("HTTP "+r.status);
-    const rows=await r.json();
-    if(!Array.isArray(rows))throw Error("Unexpected TDX response");
-    const unique=new Map();
-    rows.forEach(x=>{const f=normalizeTDX(x,ap,date);if(f)unique.set(f.code+"|"+f.timeMs+"|"+f.destCode,f)});
-    return {flights:[...unique.values()].sort((a,b)=>a.timeMs-b.timeMs),partial:rows.length>=1000,source:"TDX",fetchedAt:new Date().toISOString(),state:"ok",date};
-  }finally{clearTimeout(timeout)}
+   const saved=JSON.parse(localStorage.getItem(NAMES_KEY)||"{}");
+   for(const [c,v] of Object.entries(saved))if(!trilingual[c]&&goodName(v))trilingual[c]=v;
+  }catch{}
+ }catch(e){console.warn("Name dictionary unavailable; retaining built-in mapping",e)}
+ if(snapshot){renderFingerprint="";displaySnapshot();auditNames()}
 }
-function renderEmpty(message){
-  const box=document.createElement("div");box.className="empty";box.textContent=message;
-  el("flightRows").replaceChildren(box);
+function auditNames(){
+ if(!snapshot||!Array.isArray(snapshot.flights))return;
+ const codes=[...new Set(snapshot.flights.map(f=>String(f.destCode||"").toUpperCase()).filter(c=>/^[A-Z]{3}$/.test(c)))];
+ const missing=codes.filter(c=>!trilingual[c]&&!DEST[c]);
+ const known=codes.filter(c=>hasChinese(trilingual[c]?.zh||DEST[c]?.[0]||snapshot.flights.find(f=>f.destCode===c)?.zh)).length;
+ const box=byId("namesCoverage");if(box)box.textContent="中文名稱覆蓋："+known+"/"+codes.length+"；未完成三語："+(missing.join("、")||"無");
+ const notTried=missing.filter(c=>!namesAttempted.has(c));
+ if(notTried.length&&!namesLookupPending)batchAirportNames(notTried.slice(0,30));
 }
-function flapClock(time,animate){
-  const container=document.createElement("div");container.className="flap-group";
-  [...time].forEach((char,i)=>{const unit=document.createElement("span");unit.className="flap"+(animate?" animate":"");unit.textContent=char;unit.style.animationDelay=(i*45)+"ms";container.appendChild(unit)});
-  return container;
-}
-function renderBoard(){
-  const ap=AIRPORTS[airportIndex],t=I18N[lang],now=new Date(),date=partsNow(ap.tz,now).date;
-  el("airportName").textContent=ap.name[lang]+" ("+ap.code+")";
-  ["hTime","hFlight","hDest"].forEach((id,i)=>el(id).textContent=t.headers[i]);
-  el("localRefresh").textContent=t.refresh;
-  el("disclaimer").textContent=t.note;
-  if(ap.source==="pending"){el("retryFetch").style.display="none";renderEmpty(t.missing);el("cacheStatus").textContent="HND: --";el("updatedAt").textContent=t.at+": --";return}
-  if(!storageAvailable()){el("retryFetch").style.display="none";renderEmpty(t.storage);el("cacheStatus").textContent="--";return}
-  const snapshot=readCache(cacheKey(ap,date));
-  if(!snapshot){el("retryFetch").style.display="none";renderEmpty(t.waiting);el("cacheStatus").textContent=t.status+": --";el("updatedAt").textContent=t.at+": --";return}
-  el("updatedAt").textContent=t.at+": "+(snapshot.fetchedAt?formatClock(Date.parse(snapshot.fetchedAt),ap.tz)+" ("+ap.tz+")":"--");
-  if(snapshot.state==="attempt"){el("retryFetch").style.display="none";renderEmpty(t.waiting);el("cacheStatus").textContent=t.attempt;return}
-  if(snapshot.state==="error"){el("retryFetch").style.display="inline-block";renderEmpty(t.failed);el("cacheStatus").textContent=t.attempt;return}
-  el("retryFetch").style.display="none";
-  el("cacheStatus").textContent=t.cached+" "+(snapshot.flights||[]).length+" "+(snapshot.partial?"⚠ "+t.partial:"");
-  const upcoming=(snapshot.flights||[]).filter(f=>Number(f.timeMs)>=now.getTime()).sort((a,b)=>a.timeMs-b.timeMs).slice(0,5);
-  const nextKey=ap.code+"|"+date+"|"+upcoming.map(f=>f.code+":"+f.timeMs).join(",");
-  const animate=shownKey!==nextKey;shownKey=nextKey;
-  if(!upcoming.length){renderEmpty(t.none);return}
-  const fragment=document.createDocumentFragment();
-  upcoming.forEach((f,rowIndex)=>{
-    const row=document.createElement("div");row.className="flight-row";
-    row.appendChild(flapClock(formatClock(f.timeMs,ap.tz),animate));
-    const flight=document.createElement("span");flight.className="flightno";flight.textContent=f.code;row.appendChild(flight);
-    const dest=document.createElement("span");dest.className="dest"+(animate?" animate":"");
-    dest.style.animationDelay=(rowIndex*70)+"ms";
-    dest.textContent=(f.destCode?(f.destCode+" "):"")+(DEST[lang][f.destCode]||f.destName||"--");
-    dest.title=dest.textContent;row.appendChild(dest);
-    fragment.appendChild(row);
-  });
-  el("flightRows").replaceChildren(fragment);
-}
-async function ensureDailySnapshot(){
-  const ap=AIRPORTS[airportIndex],date=partsNow(ap.tz).date;
-  if(ap.source==="pending"){renderBoard();return}
-  if(!storageAvailable()){renderBoard();return}
-  const key=cacheKey(ap,date);
-  if(readCache(key)){renderBoard();return}
-  // 先鎖定當日請求；失敗不自動重試，僅使用者按鈕可手動再試。
-  if(!writeCache(key,{state:"attempt",date,fetchedAt:new Date().toISOString()})){renderBoard();return}
-  renderBoard();
-  try{
-    const snapshot=await fetchTDX(ap,date);
-    writeCache(key,snapshot);
-  }catch(err){
-    console.warn("TDX daily fetch failed (will not retry today)",err);
-    writeCache(key,{state:"error",date,fetchedAt:new Date().toISOString()});
+async function batchAirportNames(codes){
+ namesLookupPending=true;codes.forEach(c=>namesAttempted.add(c));
+ try{
+  const query='SELECT ?iata ?zh ?ja ?en WHERE { VALUES ?iata {'+codes.map(c=>'"'+c+'"').join(" ")+'} ?airport wdt:P238 ?iata. OPTIONAL { ?airport rdfs:label ?zh FILTER(lang(?zh)="zh") } OPTIONAL { ?airport rdfs:label ?ja FILTER(lang(?ja)="ja") } OPTIONAL { ?airport rdfs:label ?en FILTER(lang(?en)="en") } }';
+  const control=new AbortController(),timer=setTimeout(()=>control.abort(),10000);
+  let r;try{r=await fetch("https://query.wikidata.org/sparql?format=json&query="+encodeURIComponent(query),{signal:control.signal,headers:{Accept:"application/sparql-results+json"}})}finally{clearTimeout(timer)}
+  if(!r.ok)throw Error("Wikidata "+r.status);
+  const data=await r.json(),fresh={};
+  for(const v of data?.results?.bindings||[]){
+   const code=v.iata?.value,n={zh:v.zh?.value||"",ja:v.ja?.value||"",en:v.en?.value||""};
+   if(codes.includes(code)&&goodName(n)&&hasChinese(n.zh))fresh[code]=n;
   }
-  if(AIRPORTS[airportIndex].code===ap.code)renderBoard();
+  Object.assign(trilingual,fresh);
+  if(Object.keys(fresh).length){
+   try{const old=JSON.parse(localStorage.getItem(NAMES_KEY)||"{}");localStorage.setItem(NAMES_KEY,JSON.stringify({...old,...fresh}))}catch{}
+  }
+ }catch(e){console.warn("Airport-name lookup unavailable; flights unchanged",e)}
+ finally{
+  namesLookupPending=false;
+  if(snapshot){
+    renderFingerprint="";displaySnapshot();
+    const all=[...new Set(snapshot.flights.map(f=>String(f.destCode||"").toUpperCase()).filter(c=>/^[A-Z]{3}$/.test(c)))];
+    const missing=all.filter(c=>!trilingual[c]&&!DEST[c]),known=all.filter(c=>hasChinese(trilingual[c]?.zh||DEST[c]?.[0]||snapshot.flights.find(f=>f.destCode===c)?.zh)).length;
+    byId("namesCoverage").textContent="中文名稱覆蓋："+known+"/"+all.length+"；未完成三語："+(missing.join("、")||"無");
+  }
+ }
 }
-async function retryFailedFetch(){
-  const ap=AIRPORTS[airportIndex],date=partsNow(ap.tz).date,key=cacheKey(ap,date);
-  if(ap.source==="pending"||!storageAvailable())return;
-  const snapshot=readCache(key);
-  // Only retry previously failed fetches, never refresh a successful snapshot.
-  if(!snapshot||snapshot.state!=="error")return;
-  if(!writeCache(key,{state:"attempt",date,fetchedAt:new Date().toISOString()}))return;
-  renderBoard();
-  try{writeCache(key,await fetchTDX(ap,date))}
-  catch(err){console.warn("Manual TDX retry failed",err);writeCache(key,{state:"error",date,fetchedAt:new Date().toISOString()})}
-  if(AIRPORTS[airportIndex].code===ap.code)renderBoard();
+
+const LANGS = ["zh","ja","en"];
+function buildAirports(){
+ const all=POOL_TEXT.split(";").map(x=>{const [code,name,country,tz]=x.split("|");return {code,name,country,tz}});
+ const day=dateLocal(Date.now());let seed=0;for(const c of day)seed=(Math.imul(seed,31)+c.charCodeAt(0))>>>0;
+ for(let i=all.length-1;i>0;i--){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const j=seed%(i+1);[all[i],all[j]]=[all[j],all[i]]}
+ const six=all.slice(0,6),previous=readStorage(LAST_CHOICE);
+ if(previous?.date===yesterdayKey(Date.now())&&!six.some(a=>a.code===previous.code)){
+  const old=all.find(a=>a.code===previous.code);if(old)six[5]=old;
+ }
+ return six;
 }
-function changeAirport(delta){
-  airportIndex=(airportIndex+delta+AIRPORTS.length)%AIRPORTS.length;
-  shownKey="";
-  const ap=AIRPORTS[airportIndex],date=partsNow(ap.tz).date;currentDay=ap.code+":"+date;
-  clearOldCache(ap,date);ensureDailySnapshot();
+const AIRPORTS=buildAirports();
+let activeAirport = AIRPORTS[0];
+function selectedKey(){return DAILY_SELECTIONS+dateLocal(Date.now())}
+function selectedToday(){const v=readStorage(selectedKey());return Array.isArray(v)?v.filter(c=>AIRPORTS.some(a=>a.code===c)):[]}
+const DEST = {
+ HND:["東京羽田","東京・羽田","Tokyo Haneda"],NRT:["東京成田","東京・成田","Tokyo Narita"],
+ KIX:["大阪關西","大阪・関西","Osaka Kansai"],ITM:["大阪伊丹","大阪・伊丹","Osaka Itami"],
+ CTS:["札幌新千歲","札幌・新千歳","Sapporo New Chitose"],FUK:["福岡","福岡","Fukuoka"],
+ OKA:["沖繩那霸","沖縄・那覇","Okinawa Naha"],NGO:["名古屋中部","名古屋・中部","Nagoya Chubu"],
+ KMI:["宮崎機場","宮崎空港","Miyazaki Airport"],UKB:["神戶機場","神戸空港","Kobe Airport"],
+ TAE:["大邱國際機場","大邱国際空港","Daegu International Airport"],
+ KMQ:["小松機場","小松空港","Komatsu Airport"],KHH:["高雄","高雄","Kaohsiung"],TSA:["臺北松山","台北松山","Taipei Songshan"],
+ HKG:["香港","香港","Hong Kong"],MFM:["澳門","マカオ","Macau"],
+ ICN:["首爾仁川","ソウル・仁川","Seoul Incheon"],GMP:["首爾金浦","ソウル・金浦","Seoul Gimpo"],
+ PUS:["釜山","釜山","Busan"],CJU:["濟州","済州","Jeju"],
+ BKK:["曼谷蘇凡納布","バンコク・スワンナプーム","Bangkok Suvarnabhumi"],
+ DMK:["曼谷廊曼","バンコク・ドンムアン","Bangkok Don Mueang"],
+ SIN:["新加坡樟宜","シンガポール・チャンギ","Singapore Changi"],
+ KUL:["吉隆坡","クアラルンプール","Kuala Lumpur"],MNL:["馬尼拉","マニラ","Manila"],
+ SGN:["胡志明市","ホーチミン","Ho Chi Minh City"],HAN:["河內","ハノイ","Hanoi"],
+ DAD:["峴港","ダナン","Da Nang"],DPS:["峇里島登巴薩","バリ・デンパサール","Bali Denpasar"],
+ PVG:["上海浦東","上海浦東","Shanghai Pudong"],SHA:["上海虹橋","上海虹橋","Shanghai Hongqiao"],
+ PEK:["北京首都","北京首都","Beijing Capital"],PKX:["北京大興","北京大興","Beijing Daxing"],
+ CAN:["廣州","広州","Guangzhou"],SZX:["深圳","深圳","Shenzhen"],
+ XMN:["廈門","厦門","Xiamen"],CTU:["成都雙流","成都双流","Chengdu Shuangliu"],
+ TFU:["成都天府","成都天府","Chengdu Tianfu"],HGH:["杭州","杭州","Hangzhou"],
+ LAX:["洛杉磯","ロサンゼルス","Los Angeles"],SFO:["舊金山","サンフランシスコ","San Francisco"],
+ SEA:["西雅圖","シアトル","Seattle"],JFK:["紐約甘迺迪","ニューヨーク・JFK","New York JFK"],
+ YVR:["溫哥華","バンクーバー","Vancouver"],YYZ:["多倫多","トロント","Toronto"],
+ LHR:["倫敦希斯洛","ロンドン・ヒースロー","London Heathrow"],
+ CDG:["巴黎戴高樂","パリ・シャルル・ド・ゴール","Paris CDG"],
+ FRA:["法蘭克福","フランクフルト","Frankfurt"],AMS:["阿姆斯特丹","アムステルダム","Amsterdam"],
+ DXB:["杜拜","ドバイ","Dubai"],SYD:["雪梨","シドニー","Sydney"],
+ MEL:["墨爾本","メルボルン","Melbourne"],AKL:["奧克蘭","オークランド","Auckland"]
+};
+let snapshot = null;
+let selected = false;
+let requestPending = false;
+let languageIndex = 0;
+let renderFingerprint = "";
+function byId(id){return document.getElementById(id)}
+function pad(n){return String(n).padStart(2,"0")}
+function dateLocal(ms){const p=new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date(ms));const x={};p.forEach(k=>x[k.type]=k.value);return x.year+"-"+x.month+"-"+x.day}
+function timeLocal(ms,tz=TZ){return new Intl.DateTimeFormat("en-GB",{timeZone:tz,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(ms))}
+function fullLocal(ms){return dateLocal(ms)+" "+timeLocal(ms)}
+function yesterdayKey(ms){return dateLocal(ms-86400000)}
+function keyFor(ms,code=activeAirport.code){return CACHE_PREFIX+code+":"+dateLocal(ms)}
+function readStorage(k){try{return JSON.parse(localStorage.getItem(k)||"null")}catch{return null}}
+function saveStorage(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch{return false}}
+function updateClocks(){
+ const now=Date.now();
+ byId("taiwanClock").textContent=fullLocal(now);
+ byId("airportClock").textContent=timeLocal(now,activeAirport.tz);
+ const options=byId("airportChoices").querySelectorAll(".local");
+ options.forEach(el=>{const ap=AIRPORTS.find(a=>a.code===el.dataset.code);if(ap)el.textContent="當地時間 "+timeLocal(now,ap.tz)+" · "+ap.tz})
 }
-function listen(doc){
-  doc.addEventListener("click",event=>{
-    if(event.target.id==="previous")changeAirport(-1);
-    if(event.target.id==="next")changeAirport(1);
-    if(event.target.id==="localRefresh")renderBoard(); // no network call
-    if(event.target.id==="retryFetch")retryFailedFetch(); // explicitly requested only
-  });
-  doc.addEventListener("change",event=>{
-    if(event.target.id==="language"&&I18N[event.target.value]){lang=event.target.value;renderBoard()}
-  });
+function makeChoices(){
+ const area=byId("airportChoices"),frag=document.createDocumentFragment();
+ const previous=readStorage(LAST_CHOICE);
+ const wasYesterday=previous&&AIRPORTS.some(ap=>ap.code===previous.code)&&previous.date===yesterdayKey(Date.now());
+ const already=selectedToday();
+ byId("yesterday").classList.toggle("hidden",!wasYesterday);
+ if(wasYesterday){
+   const old=AIRPORTS.find(ap=>ap.code===previous.code);
+   byId("yesterday").textContent="↩ 昨天選過："+old.name+"（已保留在今日選項）";
+ }
+ byId("selectionHint").textContent="此瀏覽器今日已選 "+already.length+"／2 座，全球名額由後端限制。";
+ AIRPORTS.forEach((ap,i)=>{
+   const button=document.createElement("button");button.type="button";button.className="airportChoice";
+   const first=document.createElement("div");first.className="slot";
+   first.textContent=(wasYesterday&&ap.code===previous.code?"★ 昨日選過 · ":"機場選項 · ")+pad(i+1)+(already.includes(ap.code)?" · 已選過":"");
+   const row=document.createElement("div");row.className="place";
+   const code=document.createElement("strong");code.textContent=ap.code;
+   const country=document.createElement("em");country.textContent=ap.country;
+   row.append(code,country);
+   const name=document.createElement("div");name.className="name";name.textContent=ap.name;
+   const local=document.createElement("div");local.className="local";
+   local.dataset.code=ap.code;local.textContent="當地時間 "+timeLocal(Date.now(),ap.tz)+" · "+ap.tz;
+   button.append(first,row,name,local);
+   button.addEventListener("click",()=>chooseAirport(ap.code));
+   frag.appendChild(button);
+ });
+ area.replaceChildren(frag);
 }
-listen(document);
-const initial=AIRPORTS[airportIndex];
-currentDay=initial.code+":"+partsNow(initial.tz).date;
-clearOldCache(initial,partsNow(initial.tz).date);ensureDailySnapshot();
+function chooseAirport(code){
+ const ap=AIRPORTS.find(x=>x.code===code);if(!ap)return;
+ const already=selectedToday();
+ if(!already.includes(code)){
+   if(already.length>=2){
+     byId("selectionHint").textContent="今天已選滿兩座："+already.join("、")+"。仍可重新查看已選機場，不再新增第三座。";
+     return;
+   }
+   if(!saveStorage(selectedKey(),[...already,code])){
+     byId("selectionHint").textContent="無法儲存選擇紀錄，為避免重複耗用額度，暫不發出 API 查詢。";
+     return;
+   }
+ }
+ activeAirport=ap;selected=true;languageIndex=0;
+ byId("chooseScreen").classList.add("hidden");
+ byId("boardScreen").classList.remove("hidden");
+ byId("boardAirportName").textContent=ap.name+" "+ap.code;
+ byId("boardAirportSubtitle").textContent=ap.country+" · "+ap.tz;
+ saveStorage(LAST_CHOICE,{code,date:dateLocal(Date.now())});
+ byId("airportClock").textContent=timeLocal(Date.now(),ap.tz);
+ startSnapshot(false);
+}
+function goBack(){
+ selected=false;languageIndex=0;
+ byId("chooseScreen").classList.remove("hidden");
+ byId("boardScreen").classList.add("hidden");
+ makeChoices();updateClocks();
+}
+function mark(message,showRetry){
+ byId("fetchStatus").textContent=message;
+ byId("retryBtn").classList.toggle("hidden",!showRetry);
+}
+function empty(message){
+ const div=document.createElement("div");div.className="empty";div.textContent=message;
+ byId("flightRows").replaceChildren(div);
+}
+function jsonp(action,airport){
+ return new Promise((resolve,reject)=>{
+  const id="airport_cb_"+Math.random().toString(36).slice(2,11)+Date.now().toString(36);
+  const tag=document.createElement("script");let done=false;
+  const finish=()=>{if(done)return;done=true;clearTimeout(timer);tag.remove();delete window[id]};
+  const timer=setTimeout(()=>{finish();reject(Error("連線逾時"))},25000);
+  window[id]=data=>{finish();resolve(data)};
+  tag.onerror=()=>{finish();reject(Error("無法連接 Google Apps Script"))};
+  const params=new URLSearchParams({action,callback:id});if(airport)params.set("airport",airport);
+  tag.src=PROXY_URL+"?"+params.toString();document.head.appendChild(tag);
+ });
+}
+async function fetchAero(){
+ const code=activeAirport.code,r=await jsonp("flights",code);
+ if(!r||!r.ok)throw Error(String(r?.status||"查詢失敗"));
+ if(r.airport!==code||!Array.isArray(r.flights))throw Error("後端格式不符");
+ const startMs=Number(r.windowStartMs),endMs=Number(r.windowEndMs);
+ if(!Number.isFinite(startMs)||endMs-startMs!==43200000)throw Error("時段不符");
+ const flights=[],seen=new Set();
+ for(const f of r.flights){const ms=Number(f.timeMs),flight=String(f.flight||"").trim(),destCode=String(f.destinationIata||"").toUpperCase();
+  if(!Number.isFinite(ms)||ms<startMs||ms>=endMs||!flight)continue;
+  const k=flight+"|"+ms+"|"+destCode;if(seen.has(k))continue;seen.add(k);
+  flights.push({ms,code:flight,destCode,zh:"",en:String(f.destinationName||destCode)});
+ }
+ flights.sort((a,b)=>a.ms-b.ms||a.code.localeCompare(b.code));
+ return {state:"ok",code,startMs,endMs,fetchedMs:Date.parse(r.fetchedAt)||Date.now(),flights,partial:!!r.partial,returned:Number(r.sourceCount)||0};
+}
+async function showQuota(){
+ try{const r=await jsonp("status"),used=Array.isArray(r.selected)?r.selected.length:0;
+  byId("quotaStatus").textContent=r.publicEnabled?"｜全球今日已用 "+used+"／2 座":"｜資料接收器尚未啟用";
+ }catch{byId("quotaStatus").textContent="｜無法讀取後端狀態"}
+}
+function validateCache(data){
+ return data && data.code===activeAirport.code && data.state==="ok" &&
+ Number.isFinite(data.startMs) && Number.isFinite(data.endMs) &&
+ data.endMs-data.startMs===HOURS*MS_HOUR && Array.isArray(data.flights);
+}
+async function startSnapshot(force){
+ if(requestPending)return;
+ const now=Date.now(),key=keyFor(now,activeAirport.code);
+ if(!force){
+   const cached=readStorage(key);
+   if(validateCache(cached)){
+     snapshot=cached;
+     renderFingerprint="";
+     displaySnapshot();auditNames();
+     return;
+   }
+ }
+ const startMs=Date.now(),endMs=startMs+HOURS*MS_HOUR;
+ requestPending=true;
+ const requestedCode=activeAirport.code;
+ snapshot=null;renderFingerprint="";
+ byId("windowText").textContent="查詢區間："+fullLocal(startMs)+" → "+fullLocal(endMs)+"（12 小時）";
+ empty("正在向 AeroDataBox 查詢 "+activeAirport.name+" 出發航班…");
+ mark("正在查詢，請勿重複點選",false);
+ try{
+   const data=await fetchAero();
+   if(data.code!==requestedCode)throw Error("Airport was changed during request");
+   if(!saveStorage(key,data))mark("本次成功，但瀏覽器無法保存快取；重新開啟可能重查",false);
+   if(activeAirport.code===requestedCode){snapshot=data;renderFingerprint="";displaySnapshot();auditNames()}
+ }catch(err){
+   console.warn("AeroDataBox failed",err);
+   if(activeAirport.code===requestedCode){
+    snapshot=null;
+    mark("真實資料讀取失敗："+String(err.message||err)+"；可手動重試",true);
+    empty("無法取得 "+activeAirport.name+" 的真實航班。不使用假資料、不自動重試。");
+   }
+ }finally{requestPending=false}
+}
+function timeTiles(ms){
+ const group=document.createElement("span");group.className="clockTiles";
+ const text=timeLocal(ms,activeAirport.tz);
+ [...text].forEach((c,i)=>{
+   const f=document.createElement("span");f.className="flap flip";f.textContent=c;f.style.animationDelay=(i*42)+"ms";
+   group.appendChild(f);
+ });
+ return group;
+}
+function updateTranslation(){
+ const langIndex=languageIndex%LANGS.length;
+ const items=byId("flightRows").querySelectorAll(".dest");
+ items.forEach(dest=>{
+   const text=dest.querySelector(".ticker");
+   if(!text||!dest._flight)return;
+   const names=translate(dest._flight);
+   const name=names[langIndex]||names[2];
+   text.textContent=(dest._flight.destCode?dest._flight.destCode+" ":"")+name;
+   text.title=text.textContent;
+   text.classList.remove("scrolling");
+   text.style.removeProperty("--travel");
+   requestAnimationFrame(()=>{
+     const over=text.scrollWidth-dest.clientWidth+9;
+     if(over>5){text.style.setProperty("--travel",(-over)+"px");text.classList.add("scrolling")}
+   });
+ });
+}
+function displaySnapshot(){
+ if(!selected)return;
+ if(!snapshot){
+   byId("windowText").textContent="查詢區間：尚未選取";
+   return;
+ }
+ byId("windowText").textContent="查詢區間："+fullLocal(snapshot.startMs)+" → "+fullLocal(snapshot.endMs)+"（含跨日）";
+ byId("fetchedAt").textContent="資料取得："+fullLocal(snapshot.fetchedMs)+"（台灣時間）";
+ if(Date.now()>snapshot.endMs){
+   mark("12 小時區間已結束；今天不自動重新查詢",false);
+   empty("這次選取的 12 小時時段已結束。");
+   return;
+ }
+ const flights=snapshot.flights.filter(f=>f.ms>=Date.now()&&f.ms<=snapshot.endMs).slice(0,5);
+ const key=flights.map(f=>f.code+"/"+f.ms).join("|");
+ const suffix=snapshot.partial?" ⚠️ 資料可能不完整（達到回傳上限）":"";
+ mark("已取得 "+snapshot.flights.length+" 班／來源 "+snapshot.returned+" 筆"+suffix,false);
+ if(!flights.length){empty("目前這份 12 小時快照中，沒有尚未起飛的出發航班。");renderFingerprint=key;return}
+ if(renderFingerprint===key){updateTranslation();return}
+ renderFingerprint=key;
+ const group=document.createDocumentFragment();
+ flights.forEach(f=>{
+   const row=document.createElement("div");row.className="flightRow";
+   row.appendChild(timeTiles(f.ms));
+   const flight=document.createElement("div");flight.className="flightCode";flight.textContent=f.code;row.appendChild(flight);
+   const dest=document.createElement("div");dest.className="dest";dest._flight=f;
+   const ticker=document.createElement("span");ticker.className="ticker";dest.appendChild(ticker);
+   row.appendChild(dest);group.appendChild(row);
+ });
+ byId("flightRows").replaceChildren(group);
+ updateTranslation();
+}
+byId("backBtn").addEventListener("click",goBack);
+byId("refreshView").addEventListener("click",()=>displaySnapshot());
+byId("retryBtn").addEventListener("click",()=>startSnapshot(false));
+makeChoices();updateClocks();loadAirportNames();showQuota();
 setInterval(()=>{
-  const ap=AIRPORTS[airportIndex],next=ap.code+":"+partsNow(ap.tz).date;
-  if(next!==currentDay){currentDay=next;shownKey="";clearOldCache(ap,partsNow(ap.tz).date);ensureDailySnapshot()}
-  else renderBoard();
+ updateClocks();
+ if(selected&&snapshot)displaySnapshot();
 },60000);
-el("openPipBtn").addEventListener("click",async()=>{
-  if(!("documentPictureInPicture" in window)){alert("請使用支援 Document Picture-in-Picture 的桌面 Chrome / Edge");return}
-  try{
-    const pop=await documentPictureInPicture.requestWindow({width:455,height:330});
-    const css=document.createElement("style");css.textContent=[...document.styleSheets].map(s=>{try{return [...s.cssRules].map(r=>r.cssText).join("\n")}catch{return""}}).join("\n");
-    pop.document.head.append(css);pop.document.body.style.cssText="background:#0b0b0b;padding:5px;margin:0";
-    pop.document.body.appendChild(el("widget"));listen(pop.document);
-    pop.addEventListener("unload",()=>document.body.appendChild(el("widget")));
-  }catch(err){console.error(err);alert("無法開啟懸浮窗")}
-});
+setInterval(()=>{
+ languageIndex=(languageIndex+1)%3;
+ if(selected&&snapshot)updateTranslation();
+},3000);
 </script>
 </body>
 </html>
