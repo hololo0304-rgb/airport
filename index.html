@@ -315,16 +315,39 @@ async function fetchAero(){
  flights.sort((a,b)=>a.ms-b.ms||a.code.localeCompare(b.code));
  return {state:"ok",code,startMs,endMs,fetchedMs:Date.parse(r.fetchedAt)||Date.now(),flights,partial:!!r.partial,returned:Number(r.sourceCount)||0};
 }
+let statusCheckPending=false;
 async function showQuota(){
+ if(statusCheckPending)return;
+ statusCheckPending=true;
  const target=byId("quotaStatus");
  backendReady=false;
- target.textContent="｜正在檢查連線…";
+ const retry=byId("retryStatus");
+ retry.disabled=true;
+ target.textContent="｜正在檢查後端狀態（不查航班）…";
  try{
-  const r=await jsonp("status"),used=Array.isArray(r.selected)?r.selected.length:0;
-  backendReady=!!(r&&r.ok&&r.publicEnabled&&!r.ledgerError);
-  target.textContent=backendReady?"｜全球今日已用 "+used+"／2 座":("｜未就緒："+String(r?.status||"NO_STATUS")+(r?.ledgerError?"／配額紀錄異常":"")+(r?.publicEnabled===false?"／公開開關未啟用":""));
- }catch(err){target.textContent="｜連線錯誤："+String(err?.message||err)}
- byId("retryStatus").classList.toggle("hidden",backendReady);
+  let statusData=null,lastError=null;
+  // Google's ContentService redirect can fail intermittently. Retry ONLY status,
+  // never flights, because a flight request reserves a paid daily slot.
+  for(let attempt=1;attempt<=3;attempt++){
+   target.textContent="｜後端連線檢查 "+attempt+"／3（不耗航班額度）";
+   try{statusData=await jsonp("status");break}
+   catch(err){lastError=err;if(attempt<3)await new Promise(resolve=>setTimeout(resolve,800*attempt))}
+  }
+  if(!statusData)throw lastError||Error("無後端回應");
+  const used=Array.isArray(statusData.selected)?statusData.selected.length:0;
+  backendReady=!!(statusData.ok&&statusData.publicEnabled&&!statusData.ledgerError);
+  target.textContent=backendReady?"｜全球今日已用 "+used+"／2 座":
+   ("｜未就緒："+String(statusData.status||"NO_STATUS")+
+    (statusData.ledgerError?"／配額紀錄異常":"")+
+    (statusData.publicEnabled===false?"／公開開關未啟用":""));
+ }catch(err){
+  target.textContent="｜狀態連線失敗："+String(err?.message||err)+
+   "。直接開後端正常時，可能是 Google 轉址或瀏覽器跨站阻擋。";
+ }finally{
+  statusCheckPending=false;
+  retry.disabled=false;
+  retry.classList.toggle("hidden",backendReady);
+ }
 }
 function validateCache(data){
  return data && data.code===activeAirport.code && data.state==="ok" &&
