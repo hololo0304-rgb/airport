@@ -84,6 +84,8 @@ h1{font-size:22px;letter-spacing:1px;color:var(--gold);margin:8px 0}
      <div class="footerLine"><span id="fetchedAt">資料取得時間：--</span><button id="retryBtn" class="button action hidden" type="button">手動重試查詢</button></div>
      <div>目的地每 3 秒切換：中（繁體中文）→ 日（日本語）→ EN（English）｜缺名標記待補</div>
      <div id="namesCoverage">名稱完整率檢查中…</div>
+     <div class="footerLine"><button id="copyMissingNames" type="button" class="button">複製所有待補目的地（不查航班）</button><small id="copyNamesStatus" aria-live="polite"></small></div>
+     <div id="copyNamesFallback" class="hidden"><label for="missingNamesText">無法自動複製時，請長按下方內容選取並複製：</label><textarea id="missingNamesText" readonly rows="6" style="width:100%;min-height:110px;background:#13161d;color:#e8eef6;border:1px solid #65717d;border-radius:6px;padding:8px;font-size:12px"></textarea></div>
      <div id="sourceNote">資料來源：AeroDataBox。選取當下的 12 小時快照（國內與國際線），不會自動更新。</div>
    </div>
   </div>
@@ -461,6 +463,46 @@ function displaySnapshot(){
  byId("flightRows").replaceChildren(group);
  updateTranslation();
 }
+function missingDestinationNamesText(){
+ if(!snapshot||!Array.isArray(snapshot.flights))return "";
+ const map=new Map();
+ for(const flight of snapshot.flights){
+  const code=String(flight.destCode||"").toUpperCase().trim();
+  if(!/^[A-Z0-9]{3}$/.test(code))continue;
+  const name=String(flight.en||flight.zh||code).trim().replace(/[\r\n\t|]+/g," ").slice(0,100);
+  if(!map.has(code))map.set(code,name);
+ }
+ const missing=[...map.entries()].filter(([code])=>!goodName(nameByCode(code))&&!DEST[code]).sort((a,b)=>a[0].localeCompare(b[0]));
+ return "世界機場目的地三語待補｜"+snapshot.code+"｜"+map.size+" 個目的地｜缺 "+missing.length+" 個\n"+
+  "IATA | English Name\n"+missing.map(([code,name])=>code+" | "+name).join("\n");
+}
+
+async function copyMissingDestinationNames(){
+ const status=byId("copyNamesStatus"),fallback=byId("copyNamesFallback"),textArea=byId("missingNamesText");
+ const text=missingDestinationNamesText();
+ if(!text){status.textContent="尚無已下載的航班快照，請先開啟當天選過的機場";return}
+ if(text.includes("｜缺 0 個")){status.textContent="全部目的地已在三語字典內！";fallback.classList.add("hidden");return}
+ try {
+  if(!navigator.clipboard?.writeText)throw Error("Clipboard unavailable");
+  await navigator.clipboard.writeText(text);
+  status.textContent="已複製。把文字貼進 ChatGPT，就能一次補齊並永久存入字典。";
+  fallback.classList.add("hidden");
+ }catch(err){
+  textArea.value=text;
+  fallback.classList.remove("hidden");
+  textArea.focus();textArea.select();
+  try{
+   if(document.execCommand?.("copy")){
+    status.textContent="已複製，請貼到 ChatGPT。";
+    fallback.classList.add("hidden");
+    return;
+   }
+  }catch{}
+  status.textContent="已列出清單，請長按下方文字複製。";
+ }
+}
+byId("copyMissingNames").addEventListener("click",copyMissingDestinationNames);
+
 byId("retryStatus").addEventListener("click",showQuota);
 byId("backBtn").addEventListener("click",goBack);
 byId("refreshView").addEventListener("click",()=>displaySnapshot());
