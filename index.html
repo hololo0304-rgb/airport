@@ -151,6 +151,28 @@ const PROXY_URL="https://script.google.com/macros/s/AKfycbzsvaUzYCtttFUwGcC98ffN
 const POOL_TEXT=`HND|東京羽田|日本|Asia/Tokyo;NRT|東京成田|日本|Asia/Tokyo;KIX|大阪關西|日本|Asia/Tokyo;CTS|札幌新千歲|日本|Asia/Tokyo;FUK|福岡|日本|Asia/Tokyo;ICN|首爾仁川|韓國|Asia/Seoul;HKG|香港國際機場|香港|Asia/Hong_Kong;SIN|新加坡樟宜|新加坡|Asia/Singapore;BKK|曼谷蘇凡納布|泰國|Asia/Bangkok;KUL|吉隆坡|馬來西亞|Asia/Kuala_Lumpur;TPE|桃園國際機場|臺灣|Asia/Taipei;MNL|馬尼拉|菲律賓|Asia/Manila;CGK|雅加達|印尼|Asia/Jakarta;DEL|德里|印度|Asia/Kolkata;DXB|杜拜|阿聯酋|Asia/Dubai;DOH|多哈|卡達|Asia/Qatar;IST|伊斯坦堡|土耳其|Europe/Istanbul;LHR|倫敦希斯洛|英國|Europe/London;LGW|倫敦蓋威克|英國|Europe/London;MAN|曼徹斯特|英國|Europe/London;CDG|巴黎戴高樂|法國|Europe/Paris;AMS|阿姆斯特丹|荷蘭|Europe/Amsterdam;FRA|法蘭克福|德國|Europe/Berlin;MUC|慕尼黑|德國|Europe/Berlin;FCO|羅馬費米齊諾|義大利|Europe/Rome;MAD|馬德里|西班牙|Europe/Madrid;BCN|巴塞隆納|西班牙|Europe/Madrid;HEL|赫爾辛基|芬蘭|Europe/Helsinki;ARN|斯德哥爾摩|瑞典|Europe/Stockholm;OSL|奧斯陸|挪威|Europe/Oslo;CPH|哥本哈根|丹麥|Europe/Copenhagen;JFK|紐約甘迺迪|美國|America/New_York;EWR|紐華克|美國|America/New_York;LAX|洛杉磯|美國|America/Los_Angeles;SFO|舊金山|美國|America/Los_Angeles;SEA|西雅圖|美國|America/Los_Angeles;ORD|芝加哥歐海爾|美國|America/Chicago;ATL|亞特蘭大|美國|America/New_York;DFW|達拉斯沃斯堡|美國|America/Chicago;MIA|邁阿密|美國|America/New_York;YYZ|多倫多|加拿大|America/Toronto;YVR|溫哥華|加拿大|America/Vancouver;MEX|墨西哥城|墨西哥|America/Mexico_City;GRU|聖保羅|巴西|America/Sao_Paulo;SYD|雪梨|澳洲|Australia/Sydney;MEL|墨爾本|澳洲|Australia/Melbourne;BNE|布里斯本|澳洲|Australia/Brisbane;AKL|奧克蘭|紐西蘭|Pacific/Auckland;JNB|約翰尼斯堡|南非|Africa/Johannesburg;CAI|開羅|埃及|Africa/Cairo`;
 
 const TRILINGUAL_URL="./airport_names.json?v=20261012-368-alias";
+const AIRPORT_COUNTRIES_URL="./airport_countries.json?v=20261013-1";
+let airportCountryIso={},airportNameCountryIso={};
+const countryDisplay=typeof Intl.DisplayNames==="function"?new Intl.DisplayNames(["zh-Hant-TW"],{type:"region"}):null;
+function airportCountryLabel(record){
+ const code=String(record?.destCode||"").trim().toUpperCase();
+ const name=normalizedPlaceName(record?.en||record?.zh);
+ const iso=airportCountryIso[code]||airportNameCountryIso[name]||"";
+ if(!iso)return "國家待確認";
+ if(!countryDisplay)return iso;
+ try{const localized=countryDisplay.of(iso);return localized&&localized!==iso?localized:iso}catch{return iso}
+}
+async function loadAirportCountries(){
+ try{
+  const resp=await fetch(AIRPORT_COUNTRIES_URL,{cache:"no-cache"});
+  if(!resp.ok)throw Error("Country dataset HTTP "+resp.status);
+  const payload=await resp.json();
+  if(payload.schemaVersion!==1||!payload.iataIso)throw Error("Country dataset invalid");
+  airportCountryIso=payload.iataIso;
+  airportNameCountryIso=payload.nameIso||{};
+ }catch(err){console.warn("Airport country names not available",err)}
+ if(selected&&snapshot)updateTranslation();
+}
 const NAMES_KEY="airport-translation-cache-v1:";
 let trilingual={},nameAliases={},namesLookupPending=false,namesAttempted=new Set();
 function goodName(v){return v&&["zh","ja","en"].every(k=>typeof v[k]==="string"&&v[k].trim())}
@@ -490,7 +512,8 @@ function updateTranslation(){
    const code=String(dest._flight.destCode||"").toUpperCase();
    const known=!!verifiedNamesFor(dest._flight);
    const missing=(langIndex!==2&&!known)?" · 待補":"";
-   text.textContent=(code?code+" ":"")+name+missing;
+   const country=airportCountryLabel(dest._flight);
+   text.textContent=(code?code+" · ":"")+country+" · "+name+missing;
    text.title=text.textContent;
    text.classList.remove("scrolling");
    text.style.removeProperty("--travel");
@@ -593,7 +616,7 @@ function restoreMiniCache(){
   displaySnapshot();auditNames();return;
  }
 }
-makeChoices();updateClocks();loadAirportNames();showQuota();
+makeChoices();updateClocks();loadAirportNames();loadAirportCountries();showQuota();
 restoreMiniCache();
 setInterval(()=>{
  updateClocks();
