@@ -1,0 +1,20 @@
+{
+  "id": "./index2.html",
+  "name": "世界機場｜旅行氛圍卡片",
+  "short_name": "桌面旅行",
+  "description": "以已保存的真實航班，讓世界機場的下一段旅程安靜地停留在桌面一角。",
+  "start_url": "./index2.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0c111b",
+  "theme_color": "#0e1420",
+  "lang": "zh-TW",
+  "icons": [
+    {
+      "src": "./airport-app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
