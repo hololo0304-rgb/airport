@@ -87,8 +87,8 @@ function makeRow(f){
  const t=document.createElement("div");t.className="time";t.textContent=f.time;
  const fnum=document.createElement("div");fnum.className="flight";fnum.textContent=f.flight;
  const dest=document.createElement("div");dest.className="destWrap";
- const title=document.createElement("div");title.className="dest";title.textContent=f.iata+" · "+f.name;
- const place=document.createElement("div");place.className="country";place.textContent=f.country;
+ const title=document.createElement("div");title.className="dest";title.textContent=f.iata+" · "+f.country+" · "+f.name;
+ const place=document.createElement("div");place.className="country";place.textContent={BCN:"Barcelona",MUC:"Munich",RUH:"Riyadh",DBV:"Dubrovnik",PSA:"Pisa",LHR:"London Heathrow"}[f.iata]||"";
  dest.append(title,place);el.append(t,fnum,dest);return el;
 }
 function list(){return Array.from({length:5},(_,i)=>flights[(offset+i)%flights.length])}
