@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>世界機場桌面看板｜新版介面挑選</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:#10141a;color:#f0f3f9;padding:15px}
+main{max-width:620px;margin:auto}h1{font-size:21px;margin:0 0 5px;color:#e6cc80}
+p{font-size:12px;line-height:1.65;color:#b7c4d3;margin:0 0 13px}
+nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0 14px}
+button{font:inherit;border:1px solid #54616d;border-radius:7px;background:#29313b;color:#fff;padding:10px 5px;cursor:pointer;font-size:11px}
+button[aria-pressed=true]{background:#6b5527;border-color:#d1a953;color:#fff9de;font-weight:700}
+.stage{max-width:370px;margin:0 auto;position:relative}
+.board{min-height:349px;border-radius:10px;padding:11px;transition:background .35s,color .35s,border .35s}
+.boardTop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.boardTitle{font-weight:800;font-size:16px;letter-spacing:.3px}
+.boardSub{font-size:10px;opacity:.8;margin-top:4px}.boardClock{font-size:13px;font-variant-numeric:tabular-nums}
+.rowHeader,.flightRow{display:grid;grid-template-columns:51px 67px minmax(0,1fr);gap:6px;align-items:center}
+.rowHeader{padding:6px 0;font-size:9px;letter-spacing:1px;opacity:.6}
+.flightRow{min-height:48px;border-top:1px solid #ffffff25;padding:7px 0;transition:opacity .45s ease,transform .45s ease,background .45s ease}
+.flightRow.departing{opacity:0;transform:translateY(-11px)}
+.flightRow.arriving{opacity:0;transform:translateY(11px)}
+.time,.flight{font-weight:800;font-variant-numeric:tabular-nums}.destWrap{min-width:0}.dest{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.country{font-size:10px;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.boardBottom{font-size:10px;opacity:.65;padding-top:8px;border-top:1px solid #ffffff27;margin-top:7px}
+.layoutA{background:#151a22;color:#f5d27e;border:1px solid #826b35;box-shadow:0 5px 25px #0005}
+.layoutA .boardTitle{letter-spacing:2px}.layoutA .flightRow{font-family:"Courier New",monospace}
+.layoutA .time,.layoutA .flight{font-size:15px}.layoutA .dest{font-size:12px}
+.layoutA .country{color:#a8b8b2}
+.layoutB{background:#132b45;color:#f7fafc;border:1px solid #4d7499;box-shadow:0 5px 25px #0005}
+.layoutB .boardTop{border-bottom:3px solid #68b1d0;padding-bottom:10px}
+.layoutB .time{color:#81dee6;font-size:15px}.layoutB .flight{color:#d7e6f0}
+.layoutB .flightRow{border-color:#6794bb44}
+.layoutB .dest{font-size:13px}.layoutB .boardTitle{font-size:15px}
+.layoutC{background:#f5ede0;color:#283849;border:1px solid #d9b58c;box-shadow:0 5px 25px #0004}
+.layoutC .boardTop{border-bottom:1px solid #d3b99a;padding-bottom:9px}
+.layoutC .flightRow{grid-template-columns:49px 65px minmax(0,1fr);border-radius:7px;background:#fffaf3;border:1px solid #dfd4c9;margin:5px 0;min-height:47px;padding:6px 7px;box-shadow:0 2px 4px #917b5f12}
+.layoutC .time{color:#5e736e;font-size:12px}.layoutC .flight{color:#a7774d;font-size:12px}
+.layoutC .dest{color:#203f53;font-size:12px}
+.layoutC .boardBottom{border-color:#d3b99a}
+.controls{display:flex;justify-content:center;gap:8px;align-items:center;margin:14px 0}
+.controls button{background:#324d63;padding:10px 12px;font-size:12px}
+.explain{max-width:370px;margin:0 auto;background:#1b242e;border:1px solid #3f5267;border-radius:8px;padding:11px;font-size:12px;line-height:1.65;color:#c8d3df}
+.demo{font-size:11px;color:#dcb982;margin:6px 0 0}
+.link{color:#a2d4e8;text-decoration:none}
+@media(prefers-reduced-motion:reduce){.flightRow,.board{transition:none}}
+</style>
+</head>
+<body><main>
+<h1>✈ 選一個新的桌面機場風格</h1>
+<p>這是外觀比較頁，不使用航空 API。航班為你先前法蘭克福截圖中的歷史範例，不是今天的即時資料。正式看板目前不變。</p>
+<nav role="group" aria-label="樣式選擇">
+<button class="choice" data-style="A" aria-pressed="true">A｜金色 LED</button>
+<button class="choice" data-style="B" aria-pressed="false">B｜航廈資訊屏</button>
+<button class="choice" data-style="C" aria-pressed="false">C｜旅行卡片</button>
+</nav>
+<section class="stage">
+<div class="board layoutA" id="board">
+<div class="boardTop"><div><div class="boardTitle" id="boardTitle">DEPARTURES · FRA</div><div class="boardSub">法蘭克福 · Frankfurt Airport</div></div><div class="boardClock">16:10</div></div>
+<div class="rowHeader"><span>TIME</span><span>FLIGHT</span><span>DESTINATION</span></div>
+<div id="rows"></div><div class="boardBottom" id="bottom">Historic snapshot example · next 5 departures</div>
+</div></section>
+<div class="controls"><button id="animate" type="button">▶ 示範換班動畫</button></div>
+<div class="explain"><strong id="styleName">A｜金色 LED</strong><div id="description">延續你喜歡的黑黃機場感，但取消機械翻牌。只有離開與加入的班次淡入淡出，整個看板不會像重新整理。</div>
+<div class="demo">建議桌面寬度約 350–390 px。三種都可以用同一份航班快取。</div></div>
+<p style="margin-top:18px;text-align:center">決定後在 ChatGPT 回覆 <b>A、B 或 C</b>，我就直接將選定的樣式接到正式網站。<br><a class="link" href="./?mini=1">返回目前桌面看板</a></p>
+</main><script>
+"use strict";
+const flights=[
+ {time:"16:10",flight:"LH 1134",iata:"BCN",country:"西班牙",name:"巴塞隆納"},
+ {time:"16:15",flight:"LH 114",iata:"MUC",country:"德國",name:"慕尼黑"},
+ {time:"16:15",flight:"SV 180",iata:"RUH",country:"沙烏地阿拉伯",name:"利雅德"},
+ {time:"16:20",flight:"4Y 900",iata:"DBV",country:"克羅埃西亞",name:"杜布羅夫尼克"},
+ {time:"16:20",flight:"EN 8872",iata:"PSA",country:"義大利",name:"比薩"},
+ {time:"16:35",flight:"LH 922",iata:"LHR",country:"英國",name:"倫敦希斯洛"}
+];
+const options={
+ A:["金色 LED","延續黑黃機場感，但取消機械翻牌。只有離開與加入的班次淡入淡出，整個看板不會像重新整理。"],
+ B:["航廈資訊屏","仿真正機場液晶航班看板，清楚、俐落，時間到時新一列平滑滑入。"],
+ C:["旅行卡片","暖白色的旅行明信片風格，更像放在辦公桌的一個小旅行角落。"]
+};
+let style="A",offset=0,busy=false;
+const rows=document.getElementById("rows"),board=document.getElementById("board");
+function makeRow(f){
+ const el=document.createElement("div");el.className="flightRow";
+ const t=document.createElement("div");t.className="time";t.textContent=f.time;
+ const fnum=document.createElement("div");fnum.className="flight";fnum.textContent=f.flight;
+ const dest=document.createElement("div");dest.className="destWrap";
+ const title=document.createElement("div");title.className="dest";title.textContent=f.iata+" · "+f.name;
+ const place=document.createElement("div");place.className="country";place.textContent=f.country;
+ dest.append(title,place);el.append(t,fnum,dest);return el;
+}
+function list(){return Array.from({length:5},(_,i)=>flights[(offset+i)%flights.length])}
+function render(){
+ const frag=document.createDocumentFragment();
+ list().forEach(f=>frag.append(makeRow(f)));
+ rows.replaceChildren(frag);
+}
+function select(next){
+ style=next;board.className="board layout"+style;
+ document.querySelectorAll(".choice").forEach(btn=>btn.setAttribute("aria-pressed",String(btn.dataset.style===style)));
+ document.getElementById("styleName").textContent=next+"｜"+options[next][0];
+ document.getElementById("description").textContent=options[next][1];
+ document.getElementById("boardTitle").textContent=next==="C"?"下一段旅程 · FRA":next==="B"?"FRANKFURT  DEPARTURES":"DEPARTURES · FRA";
+}
+document.querySelectorAll(".choice").forEach(btn=>btn.addEventListener("click",()=>select(btn.dataset.style)));
+document.getElementById("animate").addEventListener("click",()=>{
+ if(busy)return;busy=true;
+ const old=rows.firstElementChild;
+ if(old)old.classList.add("departing");
+ setTimeout(()=>{
+  offset=(offset+1)%flights.length;
+  rows.firstElementChild?.remove();
+  const added=makeRow(flights[(offset+4)%flights.length]);
+  added.classList.add("arriving");rows.append(added);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>added.classList.remove("arriving")));
+  setTimeout(()=>{busy=false},520);
+ },460);
+});
+render();select("A");
+</script></body></html>
